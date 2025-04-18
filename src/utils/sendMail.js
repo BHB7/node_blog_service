@@ -36,7 +36,7 @@ const sendMail = async ({ to, subject, text = '', html = '', attachments = [] })
     return info;
   } catch (err) {
     console.error('发送邮件失败:', err.message);
-    throw err;
+    throw new Error('发送邮件失败:', err.message);
   }
 };
 

@@ -1,9 +1,13 @@
-// article
 const { DataTypes } = require('sequelize')
 const mysql = require('../db/mysql')
 
 
 const Comment = mysql.define('comment', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     user_id:{
         type:DataTypes.INTEGER,
         comment: '评论用户id'
@@ -42,10 +46,5 @@ const Comment = mysql.define('comment', {
     }
 
 });
-
-
-(async  () => {
-   await Article.sync()
-})()
 
 module.exports = Comment

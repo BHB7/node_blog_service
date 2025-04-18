@@ -1,39 +1,38 @@
-// article
 const { DataTypes } = require('sequelize')
-const mysql = require('../db/mysql')
-
+const mysql = require('../db/mysql');
 
 const Article = mysql.define('article', {
-    title:{
-        type:DataTypes.STRING,
-        comment: '文章标题',
-        allowNull:false
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
-    content:{
+    title: {
+        type: DataTypes.STRING,
+        comment: '文章标题',
+        allowNull: false
+    },
+    content: {
         type: DataTypes.STRING,
         comment: '文章内容',
         allowNull: false
     },
-    user_id:{
+    user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment: '文章所属用户id'
     },
     subset_id: {
-        type:DataTypes.INTEGER,
+        type: DataTypes.INTEGER,
         comment: '文章分类id'
     },
-    label_id:{
-        type: DataTypes.INTEGER,
-        comment: '文章标签id'
-    },
-    desc:{
+    desc: {
         type: DataTypes.STRING,
         comment: '文章描述',
         allowNull: false
     },
-    cover:{
-        type:DataTypes.STRING,
+    cover: {
+        type: DataTypes.STRING,
         comment: '文字封面',
     },
     view: {
@@ -46,10 +45,5 @@ const Article = mysql.define('article', {
     }
 
 });
-
-
-(async  () => {
-   await Article.sync()
-})()
 
 module.exports = Article

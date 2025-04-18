@@ -2,6 +2,11 @@ const mysql = require('../db/mysql');
 const { DataTypes } = require('sequelize');
 
 const User = mysql.define('user', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     name: {
         type:DataTypes.STRING,
         // 不允许为null
@@ -13,11 +18,6 @@ const User = mysql.define('user', {
     imgurl: DataTypes.STRING
     
 });
-
-
-( async () => {
-   await User.sync()
-})();
 
 
 module.exports = User

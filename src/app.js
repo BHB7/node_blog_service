@@ -4,45 +4,74 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { expressjwt } = require("express-jwt");
 const { key } = require("./utils/getConfig");
+const rateLimit = require('express-rate-limit');
+const path = require('node:path');
+const multer = require('multer');
+
 const userRouter = require('./routers/userRouter');
 const articleRouter = require('./routers/articleRouter');
+const uploadRouter = require('./routers/uploadRouter');
+const tagRouter = require("./routers/tagRouter");
+
+// 文件上传配置
+const storage = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, './public/image');
+    },
+    filename(req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage }).single('file');
+
+// 限流
+const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 100,
+    message: '请求过于频繁，请稍后再试'
+});
+
 const app = express();
 
-app.use(cors());
+
+// 设置 EJS 作为模板引擎
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'html'));  // 设置视图文件夹
+
+// 中间件
+app.use('/api/', limiter);
+app.use(cors({ credentials: true }));
 app.use(express.json());
-// post 解析表单
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(resFormat);
 
-// JWT解析中间件
-app.use(
+// JWT 鉴权中间件
+app.use('/api',
     expressjwt({ secret: key, algorithms: ["HS256"] }).unless({
         path: [
-            /^\/user\//, // 用户接口
-            { url: /^\/article$/, methods: ['GET'] }, // 排除获取全部文章的 GET 请求
-          ],
+            /^\/api\/user\//,
+            { url: /^\/api\/article$/, methods: ['GET'] },
+        ],
     })
 );
 
-app.use('/user', userRouter);
-app.use('/article', articleRouter)
+// 挂载路由
+app.use('/api/user', userRouter);
+app.use('/api/article', articleRouter);
+app.use('/api/file', upload, uploadRouter);
+app.use('/api/tag', tagRouter);
 
-
-
+// 测试接口
 app.get('/', (req, res) => {
     res.send('hello world');
 });
 
-// 全局错误处理中间件
+// 错误处理
 app.use((err, req, res, next) => {
-    // 如果 token 解析失败，返回 401 错误
+    if (res.headersSent) return next(err);
     if (err.name === "UnauthorizedError") {
-        return res.send({
-            status: 401,
-            message: "无效的token",
-        });
+        return res.error('啊哦，这个 Token 好像掉进了魔法迷雾里，无法识别！')
     }
-    // 其他未知错误
     return res.error(err.message);
 });
 

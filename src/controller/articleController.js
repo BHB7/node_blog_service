@@ -1,4 +1,9 @@
-const { getArticleService, createArticleService, deleteArticleService, updateArticleService } = require('../service/articleService');
+const { getArticleServiceById,
+     createArticleService, 
+     deleteArticleService,
+     updateArticleService,
+     getArticlePageService
+    } = require('../service/articleService');
 
 // 添加文章接口
 const createArticleController = async (req, res) => {
@@ -14,7 +19,7 @@ const createArticleController = async (req, res) => {
     // 遍历验证字段
     for (const [key, value] of Object.entries(requiredFields)) {
         if (value === undefined || value === null || value === '') {
-            return res.error(`${key} 不能为空`);
+            return res.error(`${key}: 小参数不合法呢，可能是太害羞了~`);
         }
     }
 
@@ -56,7 +61,31 @@ const updateArticleController = async (req, res) => {
     }
 };
 
+
+// 获取文章分页的控制器
+const getArticlePageController = async (req, res) => {
+    try {
+        // 合并 req.body 和 req.query，确保参数来源统一
+        const reqData = { ...req.query, ...req.body };
+
+        // 提取分页参数并转换为数字，并设置默认值
+        let { pageSize = 10, pageOffset = 0 } = reqData;
+        pageSize = Number(pageSize) || 10;
+        pageOffset = Number(pageOffset) || 0;
+
+        // 调用服务层查询文章，并返回 total 与 list 对象（假设服务返回结构已优化）
+        const pageList = await getArticlePageService({ pageSize, pageOffset });
+        
+        // 成功响应
+        res.success(pageList);
+    } catch (error) {
+        console.error('获取文章分页失败:', error);
+        res.error('获取文章分页失败');
+    }
+};
+
 module.exports = {
     createArticleController,
-    updateArticleController
+    updateArticleController,
+    getArticlePageController
 };
