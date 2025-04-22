@@ -12,7 +12,7 @@ jobs:
     steps:
     # Step 1: 检出代码
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # 升级为最新版本
 
     # Step2. 安装 Node.js 和 pnpm
     - name: Set up Node.js
@@ -25,8 +25,7 @@ jobs:
 
     # Step 3: 安装依赖
     - name: Install dependencies
-      run: |
-        pnpm install  # 或者使用 npm install
+      run: pnpm install  # 使用 pnpm 安装依赖
 
     # 4. 配置 SSH 并上传、部署
     - name: Deploy to Server
@@ -36,16 +35,23 @@ jobs:
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
       run: |
+        # 配置 SSH
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H -p $REMOTE_PORT $REMOTE_HOST >> ~/.ssh/known_hosts
+
+        # 打印调试信息，确认端口号和主机名
+        echo "使用 SSH 连接到主机 $REMOTE_HOST，端口 $REMOTE_PORT"
+
+        # 上传代码到服务器
         echo "🔄 上传代码到服务器..."
         rsync -avz --exclude node_modules --exclude .git ./ $REMOTE_USER@$REMOTE_HOST:/www/wwwroot/ser -e "ssh -p $REMOTE_PORT"
-
+        
+        # 远程安装依赖并重启服务
         echo "🚀 远程安装依赖并重启服务..."
         ssh -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST << 'EOF'
           cd /www/wwwroot/ser
           pnpm install
-          pm2 restart all || pm2 start main.js  # 替换 app.js 为你的入口文件
+          pm2 restart all || pm2 start main.js  # 替换 main.js 为你的入口文件
         EOF
