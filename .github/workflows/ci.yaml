@@ -3,63 +3,45 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # 监听主分支的推送
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # 使用 Ubuntu 环境
+    runs-on: ubuntu-latest
 
     steps:
-    # Step 1: 检出代码
     - name: Checkout code
-      uses: actions/checkout@v3  # 升级为最新版本
+      uses: actions/checkout@v3
 
-    # Step2. 安装 Node.js 和 pnpm
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'  # 设置 Node.js 版本
+        node-version: '20'
 
     - name: Install pnpm
       run: npm install -g pnpm
 
-    # Step 3: 安装依赖
-    - name: Install dependencies 
-      run: pnpm install  # 使用 pnpm 安装依赖
+    - name: Install dependencies
+      run: pnpm install
 
-    # 4. 配置 SSH 并上传、部署
-    - name: Deploy to Server 开始上传部署 
+    - name: Deploy to Server
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+        REMOTE_PASS: ${{ secrets.REMOTE_PASS }}
       run: |
-        # 打印出端口和主机信息来确认变量值 
-        echo "使用 SSH 连接到主机: $REMOTE_HOST，端口: $REMOTE_PORT"
+        echo "连接主机 $REMOTE_HOST:$REMOTE_PORT"
 
-        # 配置 SSH
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+        # 安装 sshpass
+        sudo apt-get update && sudo apt-get install -y sshpass
 
-        # 检查是否成功传递了端口
-        if [ -z "$REMOTE_PORT" ]; then
-          echo "错误：REMOTE_PORT 未设置"
-          exit 1
-        fi
-
-        # 获取主机的公钥
-        ssh-keyscan -H -p $REMOTE_PORT $REMOTE_HOST >> ~/.ssh/known_hosts
-
-        # 上传代码到服务器
         echo "🔄 上传代码到服务器..."
-        rsync -avz --exclude node_modules --exclude .git ./ $REMOTE_USER@$REMOTE_HOST:/www/wwwroot/ser -e "ssh -p $REMOTE_PORT"
-        
-        # 远程安装依赖并重启服务
+        sshpass -p "$REMOTE_PASS" rsync -avz --exclude node_modules --exclude .git ./ -e "ssh -p $REMOTE_PORT -o StrictHostKeyChecking=no" $REMOTE_USER@$REMOTE_HOST:/www/wwwroot/ser
+
         echo "🚀 远程安装依赖并重启服务..."
-        ssh -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST << 'EOF'
+        sshpass -p "$REMOTE_PASS" ssh -p $REMOTE_PORT -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'EOF'
           cd /www/wwwroot/ser
           pnpm install
-          pm2 restart all || pm2 start main.js  # 替换 main.js 为你的入口文件
+          pm2 restart all || pm2 start main.js
         EOF
