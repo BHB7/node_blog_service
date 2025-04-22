@@ -6,23 +6,12 @@ const { expressjwt } = require("express-jwt");
 const { key } = require("./utils/getConfig");
 const rateLimit = require('express-rate-limit');
 const path = require('node:path');
-const multer = require('multer');
 
 const userRouter = require('./routers/userRouter');
 const articleRouter = require('./routers/articleRouter');
 const uploadRouter = require('./routers/uploadRouter');
 const tagRouter = require("./routers/tagRouter");
 
-// 文件上传配置
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, './public/image');
-    },
-    filename(req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-const upload = multer({ storage }).single('file');
 
 // 限流
 const limiter = rateLimit({
@@ -58,7 +47,7 @@ app.use('/api',
 // 挂载路由
 app.use('/api/user', userRouter);
 app.use('/api/article', articleRouter);
-app.use('/api/file', upload, uploadRouter);
+app.use('/api/file', uploadRouter);
 app.use('/api/tag', tagRouter);
 
 // 测试接口

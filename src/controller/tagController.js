@@ -11,7 +11,7 @@ const getTagController = async (req, res) => {
 }
 const createTagController = async (req, res) => {
   const { name } = req.body || req.query;
-  if(!name) return res.error('哎哟，参数不太乖，得再检查一下哦~')
+  if (!name) return res.error('哎哟，参数不太乖，得再检查一下哦~')
   try {
     const data = await createTagService(req);
     res.success(data);

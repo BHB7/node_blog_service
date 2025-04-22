@@ -1,85 +1,98 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>验证码邮件</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>您的验证码来啦~</title>
   <style>
+    :root {
+      --main-color: #ff7ab5;
+      --text-color: #333;
+      --bg-color: #fefefe;
+      --gray: #888;
+    }
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f7f7f7;
       margin: 0;
       padding: 0;
+      font-family: 'Segoe UI', 'PingFang SC', sans-serif;
+      background: #f5f5f5;
+      color: var(--text-color);
     }
-    .email-container {
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .container {
+      max-width: 480px;
+      margin: 40px auto;
+      background: var(--bg-color);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      padding: 24px;
     }
-    .email-header {
+    .header {
       text-align: center;
-      color: #ff7ab5;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
-      margin-bottom: 20px;
+      color: var(--main-color);
+      margin-bottom: 10px;
     }
-    .email-body {
+    .content {
       font-size: 16px;
-      color: #333;
-      line-height: 1.6;
+      line-height: 1.8;
       margin-bottom: 20px;
     }
-    .email-footer {
+    .code-box {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--main-color);
+      background: #fff3f9;
+      padding: 12px 16px;
+      border-radius: 8px;
       text-align: center;
-      font-size: 14px;
-      color: #777;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      user-select: all;
     }
     .button {
-      display: inline-block;
-      padding: 12px 24px;
-      background-color: #ff7ab5;
+      display: block;
+      width: 100%;
+      background: var(--main-color);
       color: white;
-      font-size: 16px;
+      text-align: center;
+      padding: 12px;
+      border-radius: 8px;
       text-decoration: none;
-      border-radius: 5px;
-      margin-top: 10px;
+      font-weight: 500;
+      transition: background 0.3s;
     }
     .button:hover {
-      background-color: #ff568d;
+      background: #ff579e;
+    }
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: var(--gray);
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-
-  <div class="email-container">
-    <div class="email-header">
-      <h2>亲爱的小可爱，</h2>
+  <div class="container">
+    <div class="header">Hi，小可爱 ❤</div>
+    <div class="content">
+      您的验证码来啦，请在 <strong>5 分钟内</strong>使用完成验证哦~
     </div>
-
-    <div class="email-body">
-      <p>您的验证码已经准备好啦！请在5分钟内使用它来完成操作：</p>
-      <h3 style="font-size: 24px; color: #ff7ab5; font-weight: bold;"><%= code %></h3>
-      <p>如果不是您本人操作，您可以忽略这封邮件哦~</p>
-
-      <p>小可爱，记得在验证码超时前使用哦~ ⏰</p>
-
-      <a href="#" class="button" id="codeBox" onclick="copyCode(event)">点击这里使用验证码</a>
-    </div>
-
-    <div class="email-footer">
-      <p>如果您没有进行过相关操作，请忽略此邮件。</p>
-      <p>感谢您使用我们的服务！</p>
+    <div class="code-box" id="code"><%= code %></div>
+    <a href="#" class="button" onclick="copyCode(event)">点击复制验证码 ✨</a>
+    <div class="footer">
+      如果这不是您本人的操作，请放心忽略这封邮件~<br/>
+      感谢使用我们的服务，祝你生活愉快🌸
     </div>
   </div>
+
   <script>
     function copyCode(e) {
-      e.preventDefault(); // 阻止跳转
-      const code = document.getElementById('codeBox').innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        alert("已偷偷帮你复制好啦~快粘贴使用吧！(｡>∀<｡)");
+      e.preventDefault();
+      const codeText = document.getElementById('code').innerText.trim();
+      navigator.clipboard.writeText(codeText).then(() => {
+        alert('验证码已悄悄复制好啦~ 快去粘贴使用吧！✨');
       });
     }
   </script>

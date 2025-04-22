@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { PutObjectCommand, DeleteBucketCommand, ListObjectsV2Command } = require("@aws-sdk/client-s3");
 const path = require('node:path')
 const s3 = require('./awsOss');
 const { config } = require('./getConfig');
@@ -68,47 +68,81 @@ const getMimeType = (filePath) => {
     '.rtf': 'application/rtf',
     '.epub': 'application/epub+zip',
     '.mobi': 'application/x-mobipocket-ebook',
-  };  
+  };
   return mimeTypes[extname] || 'application/octet-stream';  // 默认使用 'application/octet-stream'
 };
 /**
  * 文件上传
  * @param {string} dir 本地文件路径 
  */
-async function put (dir) {
-    const filename = path.basename(dir)
-    const pathStr = path.join(__dirname, dir)
-    try {
-      const fileStream = fs.createReadStream(pathStr);  // 使用流上传
-      const mimeType = getMimeType(pathStr);  // 获取 MIME 类型
-      const command = new PutObjectCommand({
-        Bucket: config.OSS.bucket,  // 指定你的 bucket 名
-        Key: `web/${filename}`,            // 文件在 bucket 中的路径
-        Body: fileStream,   // 文件内容
-        ContentType: mimeType, // 设置 MIME 类型
-      });
-      const data = await s3.send(command);
-      // 获取文件的 URL
-      const fileUrl = `https://${config.OSS.cn}/web/${filename}`;
-      return {
-        url: fileUrl
-      }
-    } catch (err) {
-      console.log('上传文件失败',err.message);
-      
-      throw new Error('上传文件失败啦')
-    }
+async function put(dir) {
+  
+  const filename = path.basename(dir)
+  const pathStr = path.isAbsolute(dir) ? dir : path.join(__dirname, dir)
+  console.log('接收上传路径：', pathStr)
+
+  try {
+    const fileStream = fs.createReadStream(pathStr)
+    const mimeType = getMimeType(pathStr)
+    const command = new PutObjectCommand({
+      Bucket: config.OSS.bucket,
+      Key: `web/${filename}`,
+      Body: fileStream,
+      ContentType: mimeType,
+    })
+
+    const data = await s3.send(command)
+
+    const fileUrl = `https://${config.OSS.cn}/web/${filename}`
+    return { url: fileUrl }
+
+  } catch (err) {
+    console.log('上传文件失败', err.message)
+    throw new Error('上传文件失败啦')
   }
+}
+
 
 /**
  * 删除指定文件
  * @param {string} filename 文件名
  */
 async function delFile(filename) {
-   
+
+  try {
+    const command = new DeleteBucketCommand({
+      Bucket: config.OSS.bucket,
+      Key: `web/${filename}`
+    })
+    await s3.send(command);
+    return true;
+  } catch (error) {
+    console.log('删除文件失败：', error.message);
+    throw new Error("删除文件失败");
+
   }
+}
+
+
+const bucketInfo = async () => {
+  const command = new ListObjectsV2Command({
+    Bucket: config.OSS.bucket,
+    Prefix: "web/",
+  });
+
+  let fileSzieTotal = 0;
+  const res = await s3.send(command);
+  res.Contents.forEach(item => {
+    fileSzieTotal += item.Size / 1024 / 1024;
+  })
+  return {
+    list: res.Contents,
+    total: Math.round(fileSzieTotal)
+  };
+};
 
 module.exports = {
-    put,
-    delFile
+  put,
+  delFile,
+  bucketInfo
 }

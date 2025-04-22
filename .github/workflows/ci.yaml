@@ -1,0 +1,46 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # 监听主分支的推送
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 环境
+
+    steps:
+    # Step 1: 检出代码
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: 设置 Node.js 环境
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # 设置 Node.js 版本
+
+    # Step 3: 安装依赖
+    - name: Install dependencies
+      run: |
+        pnpm install  # 或者使用 npm install
+
+    # Step 4: 将代码上传到服务器
+    - name: Deploy to server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+      run: |
+        # 配置 SSH
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+        
+        # 使用 rsync 上传代码（排除不必要的文件）
+        rsync -avz --exclude node_modules --exclude .git ./ $REMOTE_USER@$REMOTE_HOST:/www/wwwroot/ser
+
+        # 远程执行部署脚本
+        ssh $REMOTE_USER@$REMOTE_HOST -p $REMOTE_PORT "cd /www/wwwroot/ser && pnpm install && pm2 restart all"
