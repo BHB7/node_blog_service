@@ -24,7 +24,7 @@ jobs:
       run: npm install -g pnpm
 
     # Step 3: 安装依赖
-    - name: Install dependencies
+    - name: Install dependencies 
       run: pnpm install  # 使用 pnpm 安装依赖
 
     # 4. 配置 SSH 并上传、部署
