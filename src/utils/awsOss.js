@@ -1,5 +1,5 @@
 const { S3Client, ListBucketsCommand } = require("@aws-sdk/client-s3");
-
+ 
 const {config} = require('./getConfig')
 const s3 = new S3Client({
   endpoint: `https://${config.OSS.ACCOUNT_ID}.r2.cloudflarestorage.com`,
