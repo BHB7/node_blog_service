@@ -35,7 +35,7 @@ jobs:
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
       run: |
-        # 打印出端口和主机信息来确认变量值
+        # 打印出端口和主机信息来确认变量值 
         echo "使用 SSH 连接到主机: $REMOTE_HOST，端口: $REMOTE_PORT"
 
         # 配置 SSH
