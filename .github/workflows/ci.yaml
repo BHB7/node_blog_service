@@ -28,7 +28,7 @@ jobs:
       run: pnpm install  # 使用 pnpm 安装依赖
 
     # 4. 配置 SSH 并上传、部署
-    - name: Deploy to Server
+    - name: Deploy to Server 开始上传部署
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
