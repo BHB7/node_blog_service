@@ -31,7 +31,7 @@ jobs:
         REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
         REMOTE_PASS: ${{ secrets.REMOTE_PASS }}
       run: |
-        echo "连接主机 $REMOTE_HOST:$REMOTE_PORT"
+        echo "连接主机 $REMOTE_HOST:$REMOTE_PORT" 
 
         # 安装 sshpass
         sudo apt-get update && sudo apt-get install -y sshpass
