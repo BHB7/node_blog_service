@@ -32,25 +32,24 @@ jobs:
         REMOTE_PASS: ${{ secrets.REMOTE_PASS }}
 
       run: |
-      
-        echo "连接主机 $REMOTE_HOST:$REMOTE_PORT" 
+        echo "连接主机 $REMOTE_HOST:$REMOTE_PORT"
 
         # 安装 sshpass
         sudo apt-get update && sudo apt-get install -y sshpass
-        echo "更新path"
-        ssh -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST << 'EOF'
-          export PNPM_HOME="$HOME/.local/share/pnpm"
-          export PATH="$PNPM_HOME:$PATH"
-          cd /www/wwwroot/ser
-          pnpm install
-          pm2 restart all || pm2 start main.js
-        EOF
+        
         echo "🔄 上传代码到服务器..."
-        sshpass -p "$REMOTE_PASS" rsync -avz --exclude node_modules --exclude .git ./ -e "ssh -p $REMOTE_PORT -o StrictHostKeyChecking=no" $REMOTE_USER@$REMOTE_HOST:/www/wwwroot/ser
+        sshpass -p "$REMOTE_PASS" rsync -avz --exclude node_modules --exclude .git ./ -e "ssh -p $REMOTE_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $REMOTE_USER@$REMOTE_HOST:/www/wwwroot/ser
 
         echo "🚀 远程安装依赖并重启服务..."
-        sshpass -p "$REMOTE_PASS" ssh -p $REMOTE_PORT -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'EOF'
+        sshpass -p "$REMOTE_PASS" ssh -p $REMOTE_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $REMOTE_USER@$REMOTE_HOST << 'EOF'
+          # Ensure the correct environment variables are set
+          export PNPM_HOME="$HOME/.local/share/pnpm"
+          export PATH="$PNPM_HOME:$PATH"
+          
+          # Navigate to the project directory
           cd /www/wwwroot/ser
+          
+          # Install dependencies and restart service
           pnpm install
           pm2 restart all || pm2 start main.js
         EOF
