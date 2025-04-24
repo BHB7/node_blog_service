@@ -39,7 +39,7 @@ app.use('/api',
     expressjwt({ secret: key, algorithms: ["HS256"] }).unless({
         path: [
             /^\/api\/user\//,
-            { url: /^\/api\/article$/, methods: ['GET'] },
+            { url: /^\/api\/article\//, methods: ['GET'] },
         ],
     })
 );
