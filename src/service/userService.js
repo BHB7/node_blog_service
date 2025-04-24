@@ -2,6 +2,7 @@ const User = require('../module/userModule');
 const jwt = require("jsonwebtoken");
 const { key } = require('../utils/getConfig');
 const { setVerifyCode, getVerifyCode } = require('../utils/verifyCode');
+const { promises } = require('nodemailer/lib/xoauth2');
 // 创建用户
 async function createUserService(name, password) {
     try {
@@ -38,14 +39,21 @@ async function loginService({ name, password }) {
     }
 }
 
+User.findOne({ where: { name:'7z' } }).then(res => {
+    console.log(res, '7z');
+    
+});
+
+
 // 注册
 async function signupService({ name, password, mail = '', code}) {
     try {
        const hostCode = await getVerifyCode(mail)
-       const oldUser = await User.findOne({name})
+       const oldUser = await User.findOne({where:{name}})
+       console.log(oldUser)
        if(oldUser) throw new Error("用户名已存在 请勿重复操作");
        
-       if(!+code === hostCode) throw new Error("注册失败：验证码错误");
+       if(!+code === +hostCode) throw new Error("注册失败：验证码错误");
        const user = await User.build({ name, password, mail }).save();
        return user
     } catch (err) {
