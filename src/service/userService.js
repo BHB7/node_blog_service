@@ -39,12 +39,6 @@ async function loginService({ name, password }) {
     }
 }
 
-User.findOne({ where: { name:'7z' } }).then(res => {
-    console.log(res, '7z');
-    
-});
-
-
 // 注册
 async function signupService({ name, password, mail = '', code}) {
     try {
