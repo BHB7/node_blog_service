@@ -40,15 +40,15 @@ async function loginService({ name, password }) {
 }
 
 // 注册
-async function signupService({ name, password, mail = '', code}) {
+async function signupService({ name, password, email = '', code}) {
     try {
-       const hostCode = await getVerifyCode(mail)
+       const hostCode = await getVerifyCode(email)
        const oldUser = await User.findOne({where:{name}})
        console.log(oldUser)
        if(oldUser) throw new Error("用户名已存在 请勿重复操作");
        
        if(!+code === +hostCode) throw new Error("注册失败：验证码错误");
-       const user = await User.build({ name, password, mail }).save();
+       const user = await User.build({ name, password, email }).save();
        return user
     } catch (err) {
         throw new Error(`${err.message}`);
