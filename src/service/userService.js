@@ -6,10 +6,10 @@ const { promises } = require('nodemailer/lib/xoauth2');
 // 创建用户
 async function createUserService(name, password) {
     try {
-        const user = await User.create({ name, password });
-        return user;
+        const user = await User.create({ name, password })
+        return user
     } catch (err) {
-        throw new Error(`创建用户失败：${err.message}`);
+        throw new Error(`创建用户失败：${err.message}`)
     }
 }
 
@@ -61,4 +61,4 @@ module.exports = {
     createUserService,
     loginService,
     signupService
-};
+}

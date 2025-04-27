@@ -23,7 +23,7 @@ async function getTagService({ tid, name, desc }) {
 // 创建tag
 async function createTagService({ name, desc }) {
     try {
-        if (await getTagService({ name })) return '标签已存在'
+        if ((await getTagService({ name })).length > 0) return '标签已存在'
         const tag = Tag.build({
             name,
             desc
