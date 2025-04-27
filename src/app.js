@@ -11,7 +11,7 @@ const userRouter = require('./routers/userRouter');
 const articleRouter = require('./routers/articleRouter');
 const uploadRouter = require('./routers/uploadRouter');
 const tagRouter = require("./routers/tagRouter");
-const adminRouter = require("./routers/adminRouter");
+const adminHomeRouter = require("./routers/adminHomeRouter");
 
 
 // 限流
@@ -50,7 +50,7 @@ app.use('/api/user', userRouter);
 app.use('/api/article', articleRouter);
 app.use('/api/file', uploadRouter);
 app.use('/api/tag', tagRouter);
-app.use('/api/admin', adminRouter);
+app.use('/api/home', adminHomeRouter);
 
 // 测试接口
 app.get('/', (req, res) => {
