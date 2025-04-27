@@ -31,7 +31,7 @@ async function loginService({ name, password }) {
             attributes: { exclude: ['password'] } // 排除 password 字段
         });
         if (!user) throw new Error("用户名或密码错误！");
-
+        
         const tokenStr = jwt.sign({ id: user.id, username: name }, key, {
             expiresIn: '1h'
         });

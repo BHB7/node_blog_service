@@ -39,7 +39,7 @@ app.use(resFormat);
 app.use('/api',
     expressjwt({ secret: key, algorithms: ["HS256"] }).unless({
         path: [
-            /^\/api\/user\//,
+            /^\/api\/user\/(login|register)$/, // 匹配 /api/user/login 和 /api/user/register
             { url: /^\/api\/article\//, methods: ['GET'] },
         ],
     })

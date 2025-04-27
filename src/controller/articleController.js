@@ -7,14 +7,14 @@ const { getArticleServiceById,
 
 // 添加文章接口
 const createArticleController = async (req, res) => {
-
-    if (!req.body) {
-        return res.error('请求体为空，请确认请求格式是否为 JSON');
+    // 从jwt中拿到用户id
+    const user_id = req.auth?.id;
+    if (!user_id) {
+        return res.error('用户未登录或 Token 无效',401);
     }
 
     const { title, content, desc, cover } = req.body;
-    // 从jwt中拿到用户id
-    const user_id = req.user.id; 
+
     // 需要验证的字段
     const requiredFields = { title, content, desc, cover, user_id };
 
@@ -27,12 +27,12 @@ const createArticleController = async (req, res) => {
 
     try {
         // 调用创建文章服务
-        const article = await createArticleService(req.body);
+        const article = await createArticleService(requiredFields);
         res.success(article);
     } catch (err) {
         // 错误日志打印，方便调试
         console.error('创建文章失败:', err);
-        res.error('添加失败', err.message);
+        res.error(req.user);
     }
 };
 
