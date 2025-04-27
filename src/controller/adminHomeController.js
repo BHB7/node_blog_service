@@ -18,6 +18,9 @@ const getTotalInfoController = async (req, res) => {
                         name: 'tag',
                         zh: '标签',
                         total: res.length,
+                        add:{
+                            path: '/admin/articles'
+                        },
                         list: res[0]?.dataValues || {}
                     });
                 }
@@ -35,6 +38,9 @@ const getTotalInfoController = async (req, res) => {
                     name: 'article',
                     zh: '文章',
                     total: res?.total || 0,
+                    add:{
+                        path: '/admin/posts'
+                    },
                     ...res
                 });
             })
