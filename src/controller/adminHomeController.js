@@ -55,7 +55,7 @@ const getTotalInfoController = async (req,res) => {
         res.success(infoList);
     } catch (error) {
         console.log('获取总揽信息失败了:', error.message );
-        res.error('获取总揽信息失败啦, 呜呜呜');
+        res.error(`获取总揽信息失败啦, 呜呜呜 ${error.message} `);
         
     };
 };
