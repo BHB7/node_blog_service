@@ -32,7 +32,7 @@ async function loginService({ name, password }) {
         });
         if (!user) throw new Error("用户名或密码错误！");
 
-        const tokenStr = jwt.sign({ username: name }, key, {
+        const tokenStr = jwt.sign({ id: user.id, username: name }, key, {
             expiresIn: '1h'
         });
 
