@@ -11,6 +11,6 @@ articleRouter.post('/post', createArticleController);
 
 articleRouter.put('/update', updateArticleController);
 
-articleRouter.all('/', getArticlePageController);
+articleRouter.all('/list', getArticlePageController);
 
 module.exports = articleRouter;

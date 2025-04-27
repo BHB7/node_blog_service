@@ -2,13 +2,14 @@ const User = require('../module/userModule');
 const jwt = require("jsonwebtoken");
 const { key } = require('../utils/getConfig');
 const { setVerifyCode, getVerifyCode } = require('../utils/verifyCode');
+const { promises } = require('nodemailer/lib/xoauth2');
 // 创建用户
 async function createUserService(name, password) {
     try {
-        const user = await User.create({ name, password });
-        return user;
+        const user = await User.create({ name, password })
+        return user
     } catch (err) {
-        throw new Error(`创建用户失败：${err.message}`);
+        throw new Error(`创建用户失败：${err.message}`)
     }
 }
 
@@ -39,14 +40,15 @@ async function loginService({ name, password }) {
 }
 
 // 注册
-async function signupService({ name, password, mail = '', code}) {
+async function signupService({ name, password, email = '', code}) {
     try {
-       const hostCode = await getVerifyCode(mail)
-       const oldUser = await User.findOne({name})
+       const hostCode = await getVerifyCode(email)
+       const oldUser = await User.findOne({where:{name}})
+       console.log(oldUser)
        if(oldUser) throw new Error("用户名已存在 请勿重复操作");
        
-       if(!+code === hostCode) throw new Error("注册失败：验证码错误");
-       const user = await User.build({ name, password, mail }).save();
+       if(!+code === +hostCode) throw new Error("注册失败：验证码错误");
+       const user = await User.build({ name, password, email }).save();
        return user
     } catch (err) {
         throw new Error(`${err.message}`);
@@ -59,4 +61,4 @@ module.exports = {
     createUserService,
     loginService,
     signupService
-};
+}

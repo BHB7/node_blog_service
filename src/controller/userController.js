@@ -87,12 +87,13 @@ const signupController = async (req, res) => {
             return res.error('验证码错误');
         }
 
-        // 2. 删除验证码，防止重复使用（可选）
-        await deleteVerifyCode(email);
+       
 
-        // 3. 调用注册服务
+        // 调用注册服务
         const data = await signupService({ name, password, email });
         res.success(data);
+        // 注册成功 删除code
+        deleteVerifyCode(email);
     } catch (err) {
         res.error(err.message);
     }
