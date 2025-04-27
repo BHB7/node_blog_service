@@ -1,38 +1,40 @@
 const { getArticleServiceById,
-     createArticleService, 
-     deleteArticleService,
-     updateArticleService,
-     getArticlePageService
-    } = require('../service/articleService');
-
-// 添加文章接口
+    createArticleService,
+    deleteArticleService,
+    updateArticleService,
+    getArticlePageService
+} = require('../service/articleService');
+// 创建文章
 const createArticleController = async (req, res) => {
-    // 从jwt中拿到用户id
-    const user_id = req.auth?.id;
+    // 从 JWT 中获取用户 ID
+    const user_id = req.auth?.id || req.user?.id; // 兼容 req.auth 和 req.user
     if (!user_id) {
-        return res.error('用户未登录或 Token 无效',401);
+        return res.error('用户未登录或 Token 无效', 401);
     }
 
     const { title, content, desc, cover } = req.body;
 
-    // 需要验证的字段
-    const requiredFields = { title, content, desc, cover, user_id };
+    // 必填字段
+    const requiredFields = { title, content, user_id };
 
-    // 遍历验证字段
+    // 遍历必填字段进行校验
     for (const [key, value] of Object.entries(requiredFields)) {
-        if (value === undefined || value === null || value === '') {
+        if (!value) {
             return res.error(`${key}: 小参数不合法呢，可能是太害羞了~`);
         }
     }
 
+    // 合并所有字段
+    const articleData = { ...requiredFields, desc, cover };
+
     try {
         // 调用创建文章服务
-        const article = await createArticleService(requiredFields);
-        res.success(article);
+        const article = await createArticleService(articleData);
+        res.success(article, '文章创建成功');
     } catch (err) {
         // 错误日志打印，方便调试
         console.error('创建文章失败:', err);
-        res.error(req.user);
+        res.error(err.message || '创建文章失败', 500);
     }
 };
 
@@ -77,7 +79,7 @@ const getArticlePageController = async (req, res) => {
 
         // 调用服务层查询文章，并返回 total 与 list 对象（假设服务返回结构已优化）
         const pageList = await getArticlePageService({ pageSize, pageOffset });
-        
+
         // 成功响应
         res.success(pageList);
     } catch (error) {

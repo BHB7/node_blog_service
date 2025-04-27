@@ -31,39 +31,18 @@ const getArticleServiceById = async (articleId) => {
  * 可选参数中 state 默认值设置为 '010'（如草稿或待发布状态），subset_id 和 label_id 默认值设为 0，
  * 并设定初始浏览量为 0.
  */
-async function createArticleService({
-    title,
-    content,
-    desc,
-    cover,
-    state = '010',
-    user_id,
-    subset_id = 0,
-    tagIds = []
-}) {
-
-
-    if(desc.length > 100) throw new Error("字数过多");
-    
-    const article = await Article.create({
-        title,
-        content,
-        desc,
-        cover,
-        state,
-        user_id,
-        subset_id,
-        view: 0
-    });
-
-    // 优化：批量插入标签并且避免重复标签
-    if (Array.isArray(tagIds) && tagIds.length > 0) {
-        const tags = await Tag.findAll({ where: { id: tagIds } });
-        await article.setTags(tags);
+const createArticleService = async (data) => {
+    try {
+        const article = await Article.create(data);
+        return article;
+    } catch (err) {
+        console.error('数据库插入失败:', err);
+        if (err.name === 'SequelizeValidationError') {
+            throw new Error(err.errors.map(e => e.message).join(', '));
+        }
+        throw err;
     }
-
-    return article;
-}
+};
 
 /**
  * 删除指定 id 的文章
