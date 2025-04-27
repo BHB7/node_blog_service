@@ -2,7 +2,7 @@ const Tag = require('../module/tagModule');
 const { Op } = require('sequelize'); // 引入 Sequelize 的 Op 操作符
 
 // 获取tag
-async function getTagService({ tid, name, desc }) {
+async function getTagService({ tid='', name='', desc='' }) {
     // 动态构造查询条件
     const conditions = {};
     if (tid) conditions.id = tid;
