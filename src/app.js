@@ -65,5 +65,11 @@ app.use((err, req, res, next) => {
     }
     return res.error(err.message);
 });
-
+// 自定义中间件：将用户信息挂载到 req.auth
+app.use((req, res, next) => {
+    if (req.user) {
+        req.auth = req.user; // 将用户信息挂载到 req.auth
+    }
+    next();
+});
 module.exports = app;
