@@ -22,11 +22,15 @@ async function getTagService({ tid, name, desc }) {
 
 // 创建tag
 async function createTagService({ name, desc }) {
+    console.log(name,desc);
+    
     try {
-        if ((await getTagService({ name })).length > 0) return '标签已存在';
+        if ((await getTagService({ name })).length > 0) throw new Error('标签已存在');
         const tag = await Tag.build({ name, desc}).save();
         return tag.toJSON();
     } catch (error) {
+        console.log(error);
+        
         throw new Error(error.message);
     };
 };
