@@ -41,6 +41,10 @@ async function createArticleService({
     subset_id = 0,
     tagIds = []
 }) {
+
+
+    if(desc.length > 100) throw new Error("字数过多");
+    
     const article = await Article.create({
         title,
         content,

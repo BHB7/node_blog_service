@@ -13,7 +13,7 @@ const Article = mysql.define('article', {
         allowNull: false
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT('medium'),
         comment: '文章内容',
         allowNull: false
     },
