@@ -18,9 +18,6 @@ const getTotalInfoController = async (req, res) => {
                         name: 'tag',
                         zh: '标签',
                         total: res.length,
-                        add:{
-                            path: '/admin/articles'
-                        },
                         list: res[0]?.dataValues || {}
                     });
                 }
@@ -35,13 +32,10 @@ const getTotalInfoController = async (req, res) => {
         getArticlePageService()
             .then((res) => {
                 resolve({
+                    ...res,
                     name: 'article',
                     zh: '文章',
-                    total: res?.total || 0,
-                    add:{
-                        path: '/admin/posts'
-                    },
-                    ...res
+                    total: res?.total || 0
                 });
             })
             .catch((err) => {
@@ -68,11 +62,28 @@ const getTotalInfoController = async (req, res) => {
 
     try {
         const pall = await Promise.all([tagTotal, articleTotal, bucketTotal]);
-        const infoList = pall.map(item => ({
-            name: item.name,
-            total: item.total || 0,
-            zh: item.zh
-        }));
+        const infoList = pall.map(item => {
+            let add = null; // 使用 let 声明，允许动态修改
+        
+            switch (item.name) {
+                case 'article':
+                    add = { path: '/admin/posts' };
+                    break;
+                case 'tag':
+                    add = { path: '/admin/articles' };
+                    break;
+                default:
+                    add = false; // 默认情况下没有路径
+                    break;
+            }
+        
+            return {
+                name: item.name,
+                total: item.total || 0,
+                zh: item.zh,
+                add // 动态生成的 add 属性
+            };
+        });
 
         res.success(infoList);
     } catch (error) {
