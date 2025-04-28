@@ -6,6 +6,7 @@ const { expressjwt } = require("express-jwt");
 const { key } = require("./utils/getConfig");
 const rateLimit = require('express-rate-limit');
 const path = require('node:path');
+const UAParser = require('ua-parser-js');
 
 const userRouter = require('./routers/userRouter');
 const articleRouter = require('./routers/articleRouter');
@@ -34,7 +35,22 @@ app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(resFormat);
+app.use((req, res, next) => {
+    // 获取客户端 IP 地址
+    const ip =
+        req.headers['x-forwarded-for'] || // 反向代理中的真实 IP
+        req.connection.remoteAddress ||  // 直接连接时的 IP
+        req.socket.remoteAddress ||
+        (req.connection && req.connection.socket ? req.connection.socket.remoteAddress : null);
 
+    req.user.ip = ip;
+
+    const parser = new UAParser(req.headers['user-agent']);
+    const result = parser.getResult();
+    // 将解析结果附加到请求对象中以便后续中间件或路由处理函数使用
+    req.user.system = result.os.name || '';
+    next();
+});
 // JWT 鉴权中间件
 app.use('/api',
     expressjwt({ secret: key, algorithms: ["HS256"] }).unless({

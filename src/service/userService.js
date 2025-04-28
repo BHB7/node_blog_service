@@ -55,6 +55,8 @@ async function signupService({ name, password, email = '', code }) {
             name,
             password,
             email,
+            ip: req.user.ip,
+            system: req.user.system,
             attributes: { exclude: ['password'] } // 排除 password 字段
         }).save();
         return user;

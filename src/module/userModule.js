@@ -15,8 +15,9 @@ const User = mysql.define('user', {
     password:DataTypes.STRING,
     age: DataTypes.INTEGER,
     mail: DataTypes.STRING,
-    imgurl: DataTypes.STRING
-    
+    imgurl: DataTypes.STRING,
+    ip: DataTypes.STRING,
+    system: DataTypes.STRING
 });
 
 
