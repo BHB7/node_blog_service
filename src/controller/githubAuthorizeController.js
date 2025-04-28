@@ -76,24 +76,18 @@ const githubAuthorizeCallbackController = async (req, res) => {
             user.token = access_token; // 更新访问令牌
             await user.save();
         }
-        res.success(user);
+        res.redirect('https://vocucc.cn');
 
     } catch (error) {
         console.error('Error during GitHub OAuth process:', error);
 
         if (error.response) {
             // 服务器返回了错误响应
-            return res.status(error.response.status || 500).json({
-                error: 'GitHub OAuth failed',
-                details: error.response.data,
-            });
+            return res.error('验证失败了',error.response.status || 500);
         }
 
         // 其他错误
-        return res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message,
-        });
+        return res.error('服务器异常',500);
     }
 };
 
