@@ -2,7 +2,7 @@ const User = require('../module/userModule');
 const jwt = require("jsonwebtoken");
 const { key } = require('../utils/getConfig');
 const { setVerifyCode, getVerifyCode } = require('../utils/verifyCode');
-const bcrypt = require('bcryptJs');
+const bcrypt = require('bcryptjs');
 // 创建用户
 async function createUserService(name, password) {
     try {
