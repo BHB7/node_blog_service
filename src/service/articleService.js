@@ -15,10 +15,22 @@ const getArticleServiceById = async (articleId) => {
         await Article.increment('view', { by: 1, where: { id: articleId }, transaction: t });
 
         // 查询文章
-        const article = await Article.findByPk(articleId, { transaction: t });
+        const article = await Article.findByPk(articleId, 
+            { 
+                transaction: t ,
+                include: [
+                    {
+                        model: Tag,
+                        as: 'tags',
+                        attributes: ['id', 'name', 'desc'],
+                        required: false
+                    }
+                ],
+            }
+        );
         await t.commit(); // 提交事务
         
-        return article.toJSON();
+        return article;
     } catch (error) {
         await t.rollback(); // 如果有错误，回滚事务
         throw error;
@@ -31,18 +43,19 @@ const getArticleServiceById = async (articleId) => {
  * 可选参数中 state 默认值设置为 '010'（如草稿或待发布状态），subset_id 和 label_id 默认值设为 0，
  * 并设定初始浏览量为 0.
  */
-const createArticleService = async (data) => {
-    try {
-        const article = await Article.create(data);
-        return article;
-    } catch (err) {
-        console.error('数据库插入失败:', err);
-        if (err.name === 'SequelizeValidationError') {
-            throw new Error(err.errors.map(e => e.message).join(', '));
-        }
-        throw err;
+async function createArticleService({title, content, desc, cover, tagIds, user_id}) {
+    if(desc.length > 100) throw new Error("字数过多");
+    
+    const article = await Article.create({title, content, desc, cover, tagIds, user_id});
+
+    // 优化：批量插入标签并且避免重复标签
+    if (Array.isArray(tagIds) && tagIds.length > 0) {
+        const tags = await Tag.findAll({ where: { id: tagIds } });
+        await article.setTags(tags);
     }
-};
+
+    return article;
+}
 
 /**
  * 删除指定 id 的文章

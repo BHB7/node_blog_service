@@ -37,7 +37,8 @@ const Article = mysql.define('article', {
     },
     view: {
         type: DataTypes.BIGINT,
-        comment: '文章浏览量'
+        comment: '文章浏览量',
+        defaultValue: 0
     },
     state: {
         type: DataTypes.ENUM(['000', '010', '100']),

@@ -8,12 +8,14 @@ const { getArticleServiceById,
 const createArticleController = async (req, res) => {
     // 从 JWT 中获取用户 ID
     const user_id = req.auth?.id || req.user?.id; // 兼容 req.auth 和 req.user
+
+    console.log(user_id);
+    
     if (!user_id) {
         return res.error('用户未登录或 Token 无效', 401);
     }
 
-    const { title, content, desc, cover } = req.body;
-
+    const { title, content, desc, cover, tagIds = []} = req.body;
     // 必填字段
     const requiredFields = { title, content, user_id };
 
@@ -25,7 +27,7 @@ const createArticleController = async (req, res) => {
     }
 
     // 合并所有字段
-    const articleData = { ...requiredFields, desc, cover };
+    const articleData = { ...requiredFields, desc, cover, tagIds };
 
     try {
         // 调用创建文章服务
