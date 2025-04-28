@@ -65,6 +65,17 @@ const updateArticleController = async (req, res) => {
     }
 };
 
+// 通过aid获取文章详情
+const getArticleControllerById = async (req, res) => {
+    try {
+        const { aid } = req.params;
+        if (!aid) return res.error('请传入aid');
+        const response = await getArticleServiceById(aid);
+        res.success(response);
+    } catch (error) {
+        res.error('获取文章详情失败啦');
+    };
+};
 
 // 获取文章分页的控制器
 const getArticlePageController = async (req, res) => {
@@ -91,5 +102,6 @@ const getArticlePageController = async (req, res) => {
 module.exports = {
     createArticleController,
     updateArticleController,
-    getArticlePageController
+    getArticlePageController,
+    getArticleControllerById
 };

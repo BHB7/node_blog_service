@@ -18,7 +18,7 @@ const getArticleServiceById = async (articleId) => {
         const article = await Article.findByPk(articleId, { transaction: t });
         await t.commit(); // 提交事务
         
-        return article;
+        return article.toJSON();
     } catch (error) {
         await t.rollback(); // 如果有错误，回滚事务
         throw error;
