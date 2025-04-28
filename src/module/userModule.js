@@ -14,10 +14,19 @@ const User = mysql.define('user', {
     },
     password:DataTypes.STRING,
     age: DataTypes.INTEGER,
-    mail: DataTypes.STRING,
+    email: DataTypes.STRING,
     imgurl: DataTypes.STRING,
     ip: DataTypes.STRING,
-    system: DataTypes.STRING
+    system: DataTypes.STRING,
+    githubId:{
+        type: DataTypes.STRING,
+        comment: 'github第三方登录'
+    },
+    token:{
+        type: DataTypes.STRING,
+        comment: 'github第三方登录鉴权信息'
+    }
+
 });
 
 
