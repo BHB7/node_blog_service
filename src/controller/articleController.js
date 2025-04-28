@@ -46,7 +46,7 @@ const updateArticleController = async (req, res) => {
         return res.error('请求体为空，请确认请求格式是否为 JSON');
     }
 
-    const { aid, title, content, desc, cover, user_id, state, label_id, subset_id } = req.body;
+    const { aid, title, content, desc, cover, user_id, state, tagIds, subset_id } = req.body;
 
     // 校验文章 ID 和必填字段
     if (!aid) {
@@ -55,7 +55,7 @@ const updateArticleController = async (req, res) => {
 
     try {
         // 调用更新文章服务
-        const isOk = await updateArticleService(aid, { title, content, desc, cover, user_id, state, label_id, subset_id });
+        const isOk = await updateArticleService(aid, { title, content, desc, cover, user_id, state, tagIds, subset_id });
         if (isOk) {
             res.success('更新成功');
         } else {

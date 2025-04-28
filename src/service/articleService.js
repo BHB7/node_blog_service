@@ -15,9 +15,9 @@ const getArticleServiceById = async (articleId) => {
         await Article.increment('view', { by: 1, where: { id: articleId }, transaction: t });
 
         // 查询文章
-        const article = await Article.findByPk(articleId, 
-            { 
-                transaction: t ,
+        const article = await Article.findByPk(articleId,
+            {
+                transaction: t,
                 include: [
                     {
                         model: Tag,
@@ -29,7 +29,7 @@ const getArticleServiceById = async (articleId) => {
             }
         );
         await t.commit(); // 提交事务
-        
+
         return article;
     } catch (error) {
         await t.rollback(); // 如果有错误，回滚事务
@@ -43,10 +43,10 @@ const getArticleServiceById = async (articleId) => {
  * 可选参数中 state 默认值设置为 '010'（如草稿或待发布状态），subset_id 和 label_id 默认值设为 0，
  * 并设定初始浏览量为 0.
  */
-async function createArticleService({title, content, desc, cover, tagIds, user_id}) {
-    if(desc.length > 100) throw new Error("字数过多");
-    
-    const article = await Article.create({title, content, desc, cover, tagIds, user_id});
+async function createArticleService({ title, content, desc, cover, tagIds, user_id }) {
+    if (desc.length > 100) throw new Error("字数过多");
+
+    const article = await Article.create({ title, content, desc, cover, tagIds, user_id });
 
     // 优化：批量插入标签并且避免重复标签
     if (Array.isArray(tagIds) && tagIds.length > 0) {
@@ -100,13 +100,43 @@ async function getArticlePageService({ pageSize = 10, pageOffset = 0 } = {}) {
  * 返回 true 表示更新成功，false 表示更新失败
  */
 async function updateArticleService(id, updateData) {
-    // 打印更新的数据（调试可选）
-    console.log(updateData);
+    try {
+        const { tagIds } = updateData;
 
-    const [rowsUpdated] = await Article.update(updateData, {
-        where: { id }
-    });
-    return rowsUpdated > 0;
+        // 打印更新的数据（调试可选）
+        console.log('更新数据:', updateData);
+
+        // 更新文章的基本信息
+        const [rowsUpdated] = await Article.update(updateData, {
+            where: { id }
+        });
+
+        if (rowsUpdated === 0) {
+            throw new Error('未找到对应的文章进行更新');
+        }
+
+        // 查询文章实例
+        const article = await Article.findByPk(id);
+        if (!article) {
+            throw new Error('未找到对应的文章实例');
+        }
+
+        // 如果提供了标签 ID 列表，则更新文章的标签关联
+        if (Array.isArray(tagIds) && tagIds.length > 0) {
+            // 检查标签是否存在
+            const tags = await Tag.findAll({ where: { id: tagIds } });
+            if (tags.length !== tagIds.length) {
+                throw new Error('部分标签不存在');
+            }
+            // 更新文章与标签的关联关系
+            await article.setTags(tagIds);
+        }
+
+        return true; // 更新成功
+    } catch (error) {
+        console.error('更新文章失败:', error.message);
+        throw error; // 将错误抛出，由调用方处理
+    }
 }
 module.exports = {
     getArticleServiceById,
