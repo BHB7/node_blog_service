@@ -56,7 +56,7 @@ app.use((req, res, next) => {
         const result = parser.getResult();
 
         // 将解析结果附加到请求对象中
-        req.user.system = result.os.name || 'Unknown OS';
+        req.user.system = result.os.name + result.os.version || 'Unknown OS';
         req.user.browser = result.browser.name || 'Unknown Browser';
 
         next();
