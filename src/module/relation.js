@@ -2,7 +2,6 @@
 const Article = require('./articleModule');
 const Tag = require('./tagModule');
 
-
 // 建立表关联
 
 // 中间表：article_tags

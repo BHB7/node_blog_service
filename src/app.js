@@ -13,6 +13,7 @@ const articleRouter = require('./routers/articleRouter');
 const uploadRouter = require('./routers/uploadRouter');
 const tagRouter = require("./routers/tagRouter");
 const adminHomeRouter = require("./routers/adminHomeRouter");
+const normalizeIp = require("./utils/normalizeIp");
 
 
 // 限流
@@ -36,26 +37,41 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(resFormat);
 app.use((req, res, next) => {
-    // 获取客户端 IP 地址
-    const ip =
-        req.headers['x-forwarded-for'] || // 反向代理中的真实 IP
-        req.connection.remoteAddress ||  // 直接连接时的 IP
-        req.socket.remoteAddress ||
-        (req.connection && req.connection.socket ? req.connection.socket.remoteAddress : null);
+    try {
+        // 初始化 req.user 对象
+        req.user = req.user || {};
 
-    req.user.ip = ip;
+        // 获取客户端 IP 地址
+        const ip =
+            req.headers['x-forwarded-for']?.split(',')[0] || // 反向代理中的真实 IP
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            (req.connection && req.connection.socket ? req.connection.socket.remoteAddress : null);
 
-    const parser = new UAParser(req.headers['user-agent']);
-    const result = parser.getResult();
-    // 将解析结果附加到请求对象中以便后续中间件或路由处理函数使用
-    req.user.system = result.os.name || '';
-    next();
+        // 规范化 IP 地址（将 IPv6 转换为 IPv4）
+        req.user.ip = normalizeIp(ip);
+
+        // 解析 User-Agent
+        const parser = new UAParser(req.headers['user-agent']);
+        const result = parser.getResult();
+
+        // 将解析结果附加到请求对象中
+        req.user.system = result.os.name || 'Unknown OS';
+        req.user.browser = result.browser.name || 'Unknown Browser';
+
+        next();
+    } catch (error) {
+        console.error('中间件出错:', error.message);
+        next(error); // 将错误传递给错误处理中间件
+    }
 });
+
+
 // JWT 鉴权中间件
 app.use('/api',
     expressjwt({ secret: key, algorithms: ["HS256"] }).unless({
         path: [
-            /^\/api\/user\/(login|register)$/, // 匹配 /api/user/login 和 /api/user/register
+            /^\/api\/user\/(login|signup|sendCode)$/, // 匹配 /api/user/login 和 /api/user/register
             { url: /^\/api\/article\//, methods: ['GET'] },
         ],
     })

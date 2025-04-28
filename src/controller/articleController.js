@@ -8,6 +8,8 @@ const { getArticleServiceById,
 const createArticleController = async (req, res) => {
     // 从 JWT 中获取用户 ID
     const user_id = req.auth?.id || req.user?.id; // 兼容 req.auth 和 req.user
+    const ip = req.user.ip;
+    const system = req.user.system;
 
     console.log(user_id);
     
@@ -27,7 +29,7 @@ const createArticleController = async (req, res) => {
     }
 
     // 合并所有字段
-    const articleData = { ...requiredFields, desc, cover, tagIds };
+    const articleData = { ...requiredFields, desc, cover, tagIds, ip, system};
 
     try {
         // 调用创建文章服务

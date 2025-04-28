@@ -40,6 +40,14 @@ const Article = mysql.define('article', {
         comment: '文章浏览量',
         defaultValue: 0
     },
+    ip: {
+        type: DataTypes.STRING,
+        comment: '发布时的ip地址'
+    },
+    system: {
+        type: DataTypes.STRING,
+        comment: '发布时的设备信息'
+    },
     state: {
         type: DataTypes.ENUM(['000', '010', '100']),
         comment: '文章状态 000 发布 010 审核 100 草稿'

@@ -1,4 +1,4 @@
-const { getAllService, loginService, signupService } = require('../service/userService');
+const { getAllService, loginService, signupService, updateUserInfoService } = require('../service/userService');
 const { setVerifyCode, getVerifyCode, deleteVerifyCode } = require('../utils/verifyCode');
 
 const sendMail = require('../utils/sendMail');
@@ -17,7 +17,7 @@ const sendCodeController = async (req, res) => {
     if (await getVerifyCode(email)) {
         return res.error('呜呜，验证码已经飞到你的邮箱啦~ 等一下，它会乖乖回来的！');
     }
-    
+
     if (!email) return res.error('哎呀呀，邮箱空空如也哦，快填上一个小小邮箱吧！');
 
     // ✅ 
@@ -25,7 +25,7 @@ const sendCodeController = async (req, res) => {
     setVerifyCode(email, code); // 存入 Redis，有效期 5 分钟
 
     try {
-       const html = await ejs.renderFile(path.join(__dirname,'../', 'html', 'email.ejs'), { code });
+        const html = await ejs.renderFile(path.join(__dirname, '../', 'html', 'email.ejs'), { code });
         await sendMail({
             to: email,
             subject: '验证码验证',
@@ -55,6 +55,9 @@ const loginController = async (req, res) => {
 
     try {
         const info = await loginService({ name, password });
+        console.log(info);
+        
+        await updateUserInfoService(info.user.id, { ip: req.user.ip, system: req.user.system });
         res.success(info, '耶！登录成功啦，欢迎回来，我们等你很久了！');
     } catch (err) {
         res.error(err.message);
@@ -66,16 +69,16 @@ const loginController = async (req, res) => {
  */
 const signupController = async (req, res) => {
     const { name, password, email, code } = req.body;
-    
+
     if (!
         isNonEmptyString(name) &&
         isNonEmptyString(password) &&
         isNonEmptyString(email) &&
         isNonEmptyString(code)
     ) {
-        return res.error('参数不合法ssss');
+        return res.error('参数不合法');
     }
-    
+
 
     try {
         // 1. 校验验证码
@@ -87,10 +90,10 @@ const signupController = async (req, res) => {
             return res.error('验证码错误');
         }
 
-       
+
 
         // 调用注册服务
-        const data = await signupService({ name, password, email });
+        const data = await signupService({name, password, email, code, ...req});
         res.success(data);
         // 注册成功 删除code
         deleteVerifyCode(email);
