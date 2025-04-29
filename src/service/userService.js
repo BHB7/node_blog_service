@@ -7,7 +7,8 @@ const bcrypt = require('bcryptjs');
 async function createUserService(name, password) {
     try {
         const user = await User.create({ name, password })
-        return user
+        const {password:_, ...safeUser} = user.dataValues;
+        return safeUser;
     } catch (err) {
         throw new Error(`创建用户失败：${err.message}`)
     }
