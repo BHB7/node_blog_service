@@ -1,6 +1,6 @@
 const express = require('express');
 const {
-    getUserAll, 
+    getUserByIdController, 
     loginController, 
     signupController, 
     sendCodeController
@@ -9,7 +9,7 @@ const {
 const userRouter = express.Router();
 
 
-userRouter.get('/', getUserAll);
+userRouter.get('/:uid', getUserByIdController);
 
 userRouter.post('/login', loginController);
 

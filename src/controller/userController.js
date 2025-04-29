@@ -1,4 +1,4 @@
-const { getAllService, loginService, signupService, updateUserInfoService } = require('../service/userService');
+const { getUserService, loginService, signupService, updateUserInfoService } = require('../service/userService');
 const { setVerifyCode, getVerifyCode, deleteVerifyCode } = require('../utils/verifyCode');
 
 const sendMail = require('../utils/sendMail');
@@ -37,9 +37,11 @@ const sendCodeController = async (req, res) => {
     }
 
 };
-const getUserAll = async (req, res) => {
+const getUserByIdController = async (req, res) => {
+    const { uid } = req.params;
+
     try {
-        const result = await getAllService();
+        const result = await getUserService(uid);
         res.success(result);
     } catch (err) {
         res.error('获取用户失败');
@@ -102,7 +104,7 @@ const signupController = async (req, res) => {
     }
 };
 module.exports = {
-    getUserAll,
+    getUserByIdController,
     loginController,
     signupController,
     sendCodeController

@@ -14,9 +14,14 @@ async function createUserService(name, password) {
 };
 
 // 获取所有用户
-async function getAllService() {
+async function getUserService(id) {
     try {
-        const users = await User.findAll();
+        let whereClause = {};
+        if (id) {
+            whereClause = { id }; // 只有当id不为空或未定义时，才添加到查询条件中
+        }
+
+        const users = await User.findAll({ where: whereClause });
         return users.map(u => u.dataValues);
     } catch (err) {
         throw new Error(`查询失败：${err.message}`);
@@ -124,7 +129,7 @@ async function updateUserInfoService(uid, newInfo) {
     }
 }
 module.exports = {
-    getAllService,
+    getUserService,
     createUserService,
     loginService,
     signupService,

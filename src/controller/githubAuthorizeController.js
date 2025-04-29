@@ -62,8 +62,10 @@ const githubAuthorizeCallbackController = async (req, res) => {
             // 创建新用户
             user = new User({
                 githubId: githubUserInfo.id,
+                ip: req.user.ip || 'un',
+                system: req.user.system || 'un' ,
                 name: githubUserInfo.login,
-                imgUrl: githubUserInfo.avatar_url,
+                imgurl: githubUserInfo.avatar_url,
                 email: githubUserInfo.email || '未提供',
                 token: access_token, // 存储访问令牌以便后续API调用
             });
@@ -72,10 +74,11 @@ const githubAuthorizeCallbackController = async (req, res) => {
         } else {
             // 更新用户信息
             user.name = githubUserInfo.login;
-            user.imgUrl = githubUserInfo.avatar_url;
+            user.imgurl = githubUserInfo.avatar_url;
             user.token = access_token; // 更新访问令牌
             await user.save();
         }
+        res.success(null,'登录成功');
         res.redirect('https://vocucc.cn');
 
     } catch (error) {

@@ -75,6 +75,7 @@ app.use('/api',
             /^\/api\/user\/(login|signup|sendCode)$/, // 匹配 /api/user/login 和 /api/user/register
             { url: /^\/api\/article\//, methods: ['GET'] },
             { url: /^\/api\/github\//, methods: ['GET'] },
+            { url: /^\/api\/user\//, methods: ['GET'] },
         ],
     })
 );
