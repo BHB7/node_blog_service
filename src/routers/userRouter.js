@@ -3,18 +3,20 @@ const {
     getUserByIdController, 
     loginController, 
     signupController, 
-    sendCodeController
+    sendCodeController,
+    getIpAddressController
 } = require('../controller/userController');
 
 const userRouter = express.Router();
 
 
-userRouter.get('/:uid', getUserByIdController);
+userRouter.get('/info/:uid', getUserByIdController);
 
 userRouter.post('/login', loginController);
 
 userRouter.post('/signup', signupController);
 
 userRouter.all('/sendCode', sendCodeController);
+userRouter.get('/getIpInfo', getIpAddressController);
 
 module.exports = userRouter

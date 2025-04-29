@@ -6,6 +6,7 @@ const genCode = require('../utils/getCode');
 const { getErrEmoji, getSuccessEmoji } = require('../utils/getResEemoji');
 const ejs = require('ejs');
 const path = require('node:path');
+const { default: axios } = require('axios');
 function isNonEmptyString(val) {
     return typeof val === 'string' && val.trim() !== '';
 }
@@ -103,9 +104,21 @@ const signupController = async (req, res) => {
         res.error(err.message);
     }
 };
+// ip 地址获取
+const getIpAddressController = async (req, res) => {
+    try {      
+        const {ip} = req.query
+        const ipInfo = await axios.get(`https://api.mir6.com/api/ip?ip=${ip}&type=json`)
+        console.log(ipInfo);
+        res.success(ipInfo.data.data);
+    } catch (error) {
+        res.error('获取ip信息失败');
+    }
+}
 module.exports = {
     getUserByIdController,
     loginController,
     signupController,
-    sendCodeController
+    sendCodeController,
+    getIpAddressController
 };
