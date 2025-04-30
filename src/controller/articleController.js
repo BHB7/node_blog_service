@@ -106,10 +106,11 @@ const getArticlePageController = async (req, res) => {
 const delArticleController = async (req, res) => {
     const { aid } = req.params;
     try {
-        await delArticleService(aid);
-        res.success(null, '删除成功');
+       const flag = await delArticleService(aid);
+       if(flag) throw new Error("删除失败了");
+       res.success(flag, '删除成功');
     } catch (error) {
-        res.error('呜呜~服务器出现点问题')
+        res.error(error.message || '呜呜~服务器出了点问题');
     }
 }
 module.exports = {
