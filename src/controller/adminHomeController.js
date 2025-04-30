@@ -1,7 +1,6 @@
 const { getTagService } = require('../service/tagService');
 const { getArticlePageService } = require('../service/articleService');
 const { bucketInfo } = require('../utils/opOssFile');
-
 const getTotalInfoController = async (req, res) => {
     const tagTotal = new Promise((resolve, reject) => {
         getTagService({ tid: '', desc: '', name: '' })
@@ -34,6 +33,7 @@ const getTotalInfoController = async (req, res) => {
                 resolve({
                     ...res,
                     name: 'article',
+                    canAdd: true,
                     zh: '文章',
                     total: res?.total || 0
                 });
@@ -63,25 +63,22 @@ const getTotalInfoController = async (req, res) => {
     try {
         const pall = await Promise.all([tagTotal, articleTotal, bucketTotal]);
         const infoList = pall.map(item => {
-            let add = null; // 使用 let 声明，允许动态修改
-        
             switch (item.name) {
                 case 'article':
-                    add = { path: '/admin/posts' };
+                    item.canAdd = true;
+                    item.addPath = '/admin/posts';
                     break;
                 case 'tag':
-                    add = { path: '/admin/articles' };
+                    item.canAdd = true;
+                    item.addPath = '/admin/articles';
                     break;
                 default:
-                    add = false; // 默认情况下没有路径
+                    item.canAdd = false; // 默认情况下没有路径
                     break;
             }
         
             return {
-                name: item.name,
-                total: item.total || 0,
-                zh: item.zh,
-                add // 动态生成的 add 属性
+                ...item
             };
         });
 

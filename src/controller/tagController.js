@@ -3,7 +3,7 @@ const { getTagService, createTagService, deleteTagService } = require('../servic
 const getTagController = async (req, res) => {
   const reqAllType = req.body || req.query;
   try {
-    const data = await getTagService(req);
+    const data = await getTagService(reqAllType);
     res.success(data);
   } catch (error) {
     res.error('获取标签失败');

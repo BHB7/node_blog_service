@@ -85,7 +85,7 @@ app.use('/api/user', userRouter);
 app.use('/api/article', articleRouter);
 app.use('/api/file', uploadRouter);
 app.use('/api/tag', tagRouter);
-app.use('/api/home', adminHomeRouter);
+app.use('/api/admin', adminHomeRouter);
 app.use('/api/github', githubAuthorizeRouter);
 
 // 测试接口

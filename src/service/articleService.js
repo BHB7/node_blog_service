@@ -44,7 +44,7 @@ const getArticleServiceById = async (articleId) => {
  * 并设定初始浏览量为 0.
  */
 async function createArticleService({ title, content, desc, cover, tagIds, user_id, ip, system }) {
-    if (desc.length > 100) throw new Error("字数过多");
+    if (desc.length > 100) throw new Error("文章描述字数超过限制");
 
     const article = await Article.create({ title, content, desc, cover, tagIds, user_id, ip, system });
 

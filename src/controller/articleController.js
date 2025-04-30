@@ -59,7 +59,7 @@ const updateArticleController = async (req, res) => {
         // 调用更新文章服务
         const isOk = await updateArticleService(aid, { title, content, desc, cover, user_id, state, tagIds, subset_id });
         if (isOk) {
-            res.success('更新成功');
+            res.success(_,'更新成功');
         } else {
             res.error('更新失败，找不到文章');
         }

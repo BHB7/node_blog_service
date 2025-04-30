@@ -10,7 +10,7 @@ const putController = async (req, res) => {
         const filePath = await renameFileWithHash(path.join(req.file.path));
         const url = await put(filePath);
          await unlink(filePath);
-        res.success(url);
+        res.success(url,'上传成功');
     } catch (err) {
         res.error(err.message);
     }
