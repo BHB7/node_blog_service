@@ -28,8 +28,13 @@ async function getVerifyCode(email) {
 
 // 删除验证码（可选）
 async function deleteVerifyCode(email) {
-    const key = `verify_code:${email}`;
-    await redis.del(key);
+    try {
+        const key = `verify_code:${email}`;
+        const res = await redis.del(key);
+        if(res !== 1) throw new Error("key不存在");
+    } catch (error) {
+        throw new Error(error.message);
+    }
 }
 // deleteVerifyCode('1812287263@qq.com')
 module.exports = {

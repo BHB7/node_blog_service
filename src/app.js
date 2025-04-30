@@ -15,6 +15,7 @@ const tagRouter = require("./routers/tagRouter");
 const adminHomeRouter = require("./routers/adminHomeRouter");
 const normalizeIp = require("./utils/normalizeIp");
 const githubAuthorizeRouter = require("./routers/githubAuthorizeRouter");
+const cacheRouter = require("./routers/cacheRouter");
 
 
 // 限流
@@ -75,6 +76,7 @@ app.use('/api',
             /^\/api\/user\/(login|signup|sendCode)$/, // 匹配 /api/user/login 和 /api/user/register
             { url: /^\/api\/article\//, methods: ['GET'] },
             { url: /^\/api\/github\//, methods: ['GET'] },
+            { url: /^\/api\/cache\//, methods: ['GET'] },
             { url: /^\/api\/user\//, methods: ['GET'] },
         ],
     })
@@ -87,6 +89,7 @@ app.use('/api/file', uploadRouter);
 app.use('/api/tag', tagRouter);
 app.use('/api/admin', adminHomeRouter);
 app.use('/api/github', githubAuthorizeRouter);
+app.use('/api/cache', cacheRouter);
 
 // 测试接口
 app.get('/', (req, res) => {
