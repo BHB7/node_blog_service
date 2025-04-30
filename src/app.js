@@ -100,7 +100,7 @@ app.get('/', (req, res) => {
 app.use((err, req, res, next) => {
     if (res.headersSent) return next(err);
     if (err.name === "UnauthorizedError") {
-        return res.error('啊哦，这个 Token 好像掉进了魔法迷雾里，无法识别！')
+        return res.error('啊哦，这个 Token 好像掉进了魔法迷雾里，无法识别！', 401)
     }
     return res.error(err.message);
 });
