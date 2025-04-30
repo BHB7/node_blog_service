@@ -1,6 +1,6 @@
 const { getArticleServiceById,
     createArticleService,
-    deleteArticleService,
+    delArticleService,
     updateArticleService,
     getArticlePageService
 } = require('../service/articleService');
@@ -12,12 +12,12 @@ const createArticleController = async (req, res) => {
     const system = req.user.system;
 
     console.log(user_id);
-    
+
     if (!user_id) {
         return res.error('用户未登录或 Token 无效', 401);
     }
 
-    const { title, content, desc, cover, tagIds = []} = req.body;
+    const { title, content, desc, cover, tagIds = [] } = req.body;
     // 必填字段
     const requiredFields = { title, content, user_id };
 
@@ -29,7 +29,7 @@ const createArticleController = async (req, res) => {
     }
 
     // 合并所有字段
-    const articleData = { ...requiredFields, desc, cover, tagIds, ip, system};
+    const articleData = { ...requiredFields, desc, cover, tagIds, ip, system };
 
     try {
         // 调用创建文章服务
@@ -59,7 +59,7 @@ const updateArticleController = async (req, res) => {
         // 调用更新文章服务
         const isOk = await updateArticleService(aid, { title, content, desc, cover, user_id, state, tagIds, subset_id });
         if (isOk) {
-            res.success(_,'更新成功');
+            res.success(_, '更新成功');
         } else {
             res.error('更新失败，找不到文章');
         }
@@ -91,7 +91,6 @@ const getArticlePageController = async (req, res) => {
         let { pageSize = 10, pageOffset = 0 } = reqData;
         pageSize = Number(pageSize) || 10;
         pageOffset = Number(pageOffset) || 0;
-
         // 调用服务层查询文章，并返回 total 与 list 对象（假设服务返回结构已优化）
         const pageList = await getArticlePageService({ pageSize, pageOffset });
 
@@ -103,9 +102,20 @@ const getArticlePageController = async (req, res) => {
     }
 };
 
+// 通过id删除文章
+const delArticleController = async (req, res) => {
+    const { aid } = req.params;
+    try {
+        await delArticleService(aid);
+        res.success(null, '删除成功');
+    } catch (error) {
+        res.error('呜呜~服务器出现点问题')
+    }
+}
 module.exports = {
     createArticleController,
     updateArticleController,
     getArticlePageController,
-    getArticleControllerById
+    getArticleControllerById,
+    delArticleController
 };

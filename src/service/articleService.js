@@ -61,7 +61,7 @@ async function createArticleService({ title, content, desc, cover, tagIds, user_
  * 删除指定 id 的文章
  * 如果删除成功返回 true，否则返回 false
  */
-async function deleteArticleService(id) {
+async function delArticleService(id) {
     const result = await Article.destroy({ where: { id } });
     return result > 0;
 }
@@ -141,7 +141,7 @@ async function updateArticleService(id, updateData) {
 module.exports = {
     getArticleServiceById,
     createArticleService,
-    deleteArticleService,
+    delArticleService,
     updateArticleService,
     getArticlePageService
 };
