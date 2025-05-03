@@ -17,7 +17,7 @@ const createArticleController = async (req, res) => {
         return res.error('用户未登录或 Token 无效', 401);
     }
 
-    const { title, content, desc, cover, tagIds = [] } = req.body;
+    const { title, content, desc, cover, tagIds = [], state='010' } = req.body;
     // 必填字段
     const requiredFields = { title, content, user_id };
 
@@ -29,7 +29,7 @@ const createArticleController = async (req, res) => {
     }
 
     // 合并所有字段
-    const articleData = { ...requiredFields, desc, cover, tagIds, ip, system };
+    const articleData = { ...requiredFields, desc, cover, tagIds, ip, system, state };
 
     try {
         // 调用创建文章服务
