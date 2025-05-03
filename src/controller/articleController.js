@@ -107,7 +107,7 @@ const delArticleController = async (req, res) => {
     const { aid } = req.params;
     try {
        const flag = await delArticleService(aid);
-       if(flag) throw new Error("删除失败了");
+       if(!flag) throw new Error("删除失败了");
        res.success(flag, '删除成功');
     } catch (error) {
         res.error(error.message || '呜呜~服务器出了点问题');

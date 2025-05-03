@@ -63,6 +63,8 @@ async function createArticleService({ title, content, desc, cover, tagIds, user_
  */
 async function delArticleService(id) {
     const result = await Article.destroy({ where: { id } });
+    console.log(result,555);
+    
     return result > 0;
 }
 
