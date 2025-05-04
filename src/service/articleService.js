@@ -1,4 +1,5 @@
 const Article = require('../module/articleModule');
+const { Op } = require('sequelize');
 const Tag = require('../module/tagModule');
 require('../module/relation');
 /**
@@ -74,27 +75,52 @@ async function delArticleService(id) {
  * - 使用 findAndCountAll 方法返回符合条件的文章总数以及当前分页的数据
  * - 保证传入参数为对象类型（避免 getArticlePageService(10, 0) 的参数错误）
  */
-async function getArticlePageService({ pageSize = 10, pageOffset = 0 } = {}) {
+async function getArticlePageService({ pageSize = 10, pageOffset = 0, query = {} } = {}) {
+    const { title, content, tagIds } = query;
+
+    // 构建 where 查询条件
+    const where = {};
+    if (title) {
+        where.title = { [Op.like]: `%${title}%` }; // 模糊匹配标题
+    }
+    if (content) {
+        where.content = { [Op.like]: `%${content}%` }; // 模糊匹配内容
+    }
+
+    // 构建 include 查询条件
+    const include = [];
+    if (tagIds && tagIds.length > 0) {
+        include.push({
+            model: Tag,
+            as: 'tags',
+            attributes: ['id', 'name', 'desc'],
+            where: {
+                id: { [Op.in]: tagIds } // 匹配给定的 tagIds
+            },
+            required: true // 改为 true 表示必须满足这个条件（INNER JOIN）
+        });
+    } else {
+        include.push({
+            model: Tag,
+            as: 'tags',
+            attributes: ['id', 'name', 'desc'],
+            required: false
+        });
+    }
+
     const { count, rows } = await Article.findAndCountAll({
+        where,
         limit: pageSize,
         offset: pageOffset,
         order: [['updatedAt', 'desc']],
-        include: [
-            {
-                model: Tag,
-                as: 'tags',
-                attributes: ['id', 'name', 'desc'],
-                required: false
-            }
-        ],
-        // 可以增加缓存等处理机制
+        include,
     });
 
     return {
         total: count,
         list: rows.map(item => item.toJSON())
     };
-}
+};
 
 /**
  * 修改文章

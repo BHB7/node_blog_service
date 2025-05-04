@@ -89,10 +89,11 @@ const getArticlePageController = async (req, res) => {
 
         // 提取分页参数并转换为数字，并设置默认值
         let { pageSize = 10, pageOffset = 0 } = reqData;
+        const { state, title, content, tagIds } = reqData;
         pageSize = Number(pageSize) || 10;
         pageOffset = Number(pageOffset) || 0;
         // 调用服务层查询文章，并返回 total 与 list 对象（假设服务返回结构已优化）
-        const pageList = await getArticlePageService({ pageSize, pageOffset });
+        const pageList = await getArticlePageService({ query: {state, title, content, tagIds} ,pageSize, pageOffset });
 
         // 成功响应
         res.success(pageList);
