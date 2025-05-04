@@ -96,6 +96,7 @@ async function signupService(req) {
             name,
             password: hashedPassword, // 存储加密后的密码
             email,
+            imgurl:'https://vocucd.cn/web/%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.png',
             ip: req.user.ip,
             system: req.user.system
         });
