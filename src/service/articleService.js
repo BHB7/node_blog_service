@@ -43,10 +43,10 @@ const getArticleServiceById = async (articleId) => {
  * 可选参数中 state 默认值设置为 '010'（如草稿或待发布状态），subset_id 和 label_id 默认值设为 0，
  * 并设定初始浏览量为 0.
  */
-async function createArticleService({ title, content, desc, cover, tagIds, user_id, ip, system }) {
+async function createArticleService({ title, content, desc, cover, tagIds, user_id, ip, system, state }) {
     if (desc.length > 100) throw new Error("文章描述字数超过限制");
 
-    const article = await Article.create({ title, content, desc, cover, tagIds, user_id, ip, system });
+    const article = await Article.create({ title, content, desc, cover, tagIds, user_id, ip, system, state});
 
     // 优化：批量插入标签并且避免重复标签
     if (Array.isArray(tagIds) && tagIds.length > 0) {
