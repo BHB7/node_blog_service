@@ -6,12 +6,12 @@ const bcrypt = require('bcryptjs');
 // 创建用户
 async function createUserService(name, password) {
     try {
-        const user = await User.create({ name, password })
+        const user = await User.create({ name, password });
         const {password:_, ...safeUser} = user.dataValues;
         return safeUser;
     } catch (err) {
-        throw new Error(`创建用户失败：${err.message}`)
-    }
+        throw new Error(`创建用户失败：${err.message}`);
+    };
 };
 
 // 通过uid获取用户
@@ -23,10 +23,11 @@ async function getUserService(id) {
         }
 
         const user = await User.findOne({ where: whereClause });
-        return user.dataValues;
+        const {password:_, ...safeUser} = user.dataValues;
+        return safeUser;
     } catch (err) {
         throw new Error(`查询失败：${err.message}`);
-    }
+    };
 };
 
 // 登录逻辑
