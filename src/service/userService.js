@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 // 创建用户
 async function createUserService(name, password) {
     try {
-        const user = await User.create({ name, password });
+        const user = await User.create({ name, password, imgurl:'https://vocucd.cn/web/%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.png' });
         const {password:_, ...safeUser} = user.dataValues;
         return safeUser;
     } catch (err) {
