@@ -76,7 +76,7 @@ async function delArticleService(id) {
  * - 保证传入参数为对象类型（避免 getArticlePageService(10, 0) 的参数错误）
  */
 async function getArticlePageService({ pageSize = 10, pageOffset = 0, query = {} } = {}) {
-    const { title, content, tagIds } = query;
+    const { title, content, tagIds, state } = query;
 
     // 构建 where 查询条件
     const where = {};
@@ -85,6 +85,9 @@ async function getArticlePageService({ pageSize = 10, pageOffset = 0, query = {}
     }
     if (content) {
         where.content = { [Op.like]: `%${content}%` }; // 模糊匹配内容
+    }
+    if (typeof query.state === 'string' && query.state.trim() !== '') {
+        where.state = query.state.trim();
     }
 
     // 构建 include 查询条件
