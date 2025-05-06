@@ -4,7 +4,8 @@ const {
     loginController, 
     signupController, 
     sendCodeController,
-    getIpAddressController
+    getIpAddressController,
+    updateUserInfoController
 } = require('../controller/userController');
 
 const userRouter = express.Router();
@@ -18,5 +19,6 @@ userRouter.post('/signup', signupController);
 
 userRouter.all('/sendCode', sendCodeController);
 userRouter.get('/getIpInfo', getIpAddressController);
-
+//  更新
+userRouter.put('/put', updateUserInfoController);
 module.exports = userRouter

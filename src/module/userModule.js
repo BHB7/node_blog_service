@@ -17,6 +17,10 @@ const User = mysql.define('user', {
     email: DataTypes.STRING,
     imgurl: DataTypes.STRING,
     ip: DataTypes.STRING,
+    motto: {
+        type:DataTypes.STRING,
+        comment: '个性签名'
+    },
     system: DataTypes.STRING,
     githubId:{
         type: DataTypes.STRING,
