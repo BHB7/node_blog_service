@@ -118,14 +118,14 @@ const getIpAddressController = async (req, res) => {
 
 // 更用户信息 
 const updateUserInfoController = async (req, res) => {
-    const { uid } = req.params || req.query;
+    const { uid, ...args } = req.body;
     if(!uid) return res.error('参数不合法'); 
     try {      
-        const flag = await updateUserInfoService(uid);
+        const flag = await updateUserInfoService(uid, args);
         if(!flag) return res.error('更新失败');
         res.success(null, '更新成功');
     } catch (error) {
-        res.error('获取ip信息失败');
+        res.error('更新信息失败');
     }
 }
 module.exports = {
