@@ -39,8 +39,7 @@ const sendCodeController = async (req, res) => {
 
 };
 const getUserByIdController = async (req, res) => {
-    let { uid } = req.params;
-    if(!uid) uid = req.auth?.id || req.user?.id;
+    const uid = req.params.uid || req.auth?.id || req.user?.id;
     try {
         const result = await getUserService(uid);
         res.success(result);
