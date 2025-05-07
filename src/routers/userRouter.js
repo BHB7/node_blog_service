@@ -11,6 +11,7 @@ const {
 const userRouter = express.Router();
 
 
+userRouter.get('/', getUserByIdController);
 userRouter.get('/info/:uid', getUserByIdController);
 
 userRouter.post('/login', loginController);

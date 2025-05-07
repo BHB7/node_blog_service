@@ -17,6 +17,10 @@ const User = mysql.define('user', {
     email: DataTypes.STRING,
     imgurl: DataTypes.STRING,
     ip: DataTypes.STRING,
+    gender:{
+        type: DataTypes.ENUM(["0", "1"]),
+        comment: '性别 0 男  1 女'
+    },
     motto: {
         type:DataTypes.STRING,
         comment: '个性签名'
