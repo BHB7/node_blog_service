@@ -16,6 +16,7 @@ const adminHomeRouter = require("./routers/adminHomeRouter");
 const normalizeIp = require("./utils/normalizeIp");
 const githubAuthorizeRouter = require("./routers/githubAuthorizeRouter");
 const cacheRouter = require("./routers/cacheRouter");
+const { musicRouter } = require("./routers/musicRouter");
 
 
 // 限流
@@ -91,6 +92,7 @@ app.use('/api/tag', tagRouter);
 app.use('/api/admin', adminHomeRouter);
 app.use('/api/github', githubAuthorizeRouter);
 app.use('/api/cache', cacheRouter);
+app.use('/api/music', musicRouter);
 
 // 测试接口
 app.get('/', (req, res) => {
