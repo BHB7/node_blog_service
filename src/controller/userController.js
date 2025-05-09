@@ -117,7 +117,7 @@ const getIpAddressController = async (req, res) => {
 
 // 更用户信息 
 const updateUserInfoController = async (req, res) => {
-    const { uid, ...args } = req.body;
+    const { uid = req.params.uid || req.auth?.id || req.user?.id, ...args } = req.body;
     if(!uid) return res.error('参数不合法'); 
     try {      
         const flag = await updateUserInfoService(uid, args);
