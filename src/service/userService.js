@@ -131,10 +131,25 @@ async function updateUserInfoService(uid, newInfo) {
         throw error; // 将错误抛出，由调用方处理
     }
 }
+// 获取超级管理员信息
+async function getAdminService() {
+    try {
+        let whereClause = {
+            permissionLevel: '200'
+        };
+
+        const user = await User.findOne({ where: whereClause });
+        const {password:_, ...safeUser} = user.dataValues;
+        return safeUser;
+    } catch (err) {
+        throw new Error(`查询失败：${err.message}`);
+    };
+}
 module.exports = {
     getUserService,
     createUserService,
     loginService,
     signupService,
+    getAdminService,
     updateUserInfoService
 }

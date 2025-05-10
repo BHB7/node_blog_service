@@ -38,6 +38,7 @@ const sendCodeController = async (req, res) => {
     }
 
 };
+// 通过uid获取用户信息
 const getUserByIdController = async (req, res) => {
     const uid = req.params.uid || req.auth?.id || req.user?.id;
     try {
@@ -48,6 +49,15 @@ const getUserByIdController = async (req, res) => {
     }
 };
 
+// 获取超级管理员信息
+const getAdminController = async (req, res) => {
+    try {
+        const result = await getUserService();
+        res.success(result);
+    } catch (err) {
+        res.error('获取用户失败');
+    }
+};
 /**
  * 登录控制
  */
@@ -133,5 +143,6 @@ module.exports = {
     signupController,
     sendCodeController,
     getIpAddressController,
+    getAdminController,
     updateUserInfoController
 };

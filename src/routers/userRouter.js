@@ -5,7 +5,8 @@ const {
     signupController, 
     sendCodeController,
     getIpAddressController,
-    updateUserInfoController
+    updateUserInfoController,
+    getAdminController
 } = require('../controller/userController');
 
 const userRouter = express.Router();
@@ -13,6 +14,7 @@ const userRouter = express.Router();
 
 userRouter.get('/', getUserByIdController);
 userRouter.get('/info/:uid', getUserByIdController);
+userRouter.get('/admin/info', getAdminController);
 
 userRouter.post('/login', loginController);
 
