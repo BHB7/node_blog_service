@@ -30,7 +30,7 @@ const searchController = async (req, res, next) => {
             params: {
                 all: req.query.all,
                 ft: 'music',
-                // itemset: 'web_2013',
+                itemset: 'web_2013',
                 client: 'kt',
                 pn,
                 rn,
