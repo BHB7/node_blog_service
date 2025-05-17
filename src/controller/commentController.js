@@ -1,4 +1,4 @@
-const { addCommentService, delCommentService } = require('../service/comentService');
+const { addCommentService, delCommentService, getCommentsService} = require('../service/comentService');
 
 
 
@@ -24,9 +24,21 @@ const delCommentController = async (req, res) =>{
     }
 }
 
-
+const getCommentsController = async (req, res) => {
+    console.log('0000');
+    
+    try {
+        const { cid } = req.query || req.params;
+        const response = await getCommentsService(cid);
+        res.success(response, '获取评论成功')
+    } catch (error) {
+        res.error('获取评论失败');
+    }
+    
+}
 
 module.exports = {
     addCommentController,
-    delCommentController
+    delCommentController,
+    getCommentsController
 }

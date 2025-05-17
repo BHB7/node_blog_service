@@ -61,6 +61,8 @@ async function addCommentService({ uid, aid, content, pid = null }) {
         throw new Error(`添加评论失败：${error.message}`);
     }
 }
+
+// 删除评论
 async function delCommentService(cid) {
 
     if (!cid) return
@@ -75,7 +77,30 @@ async function delCommentService(cid) {
 }
 
 
+async function getCommentsService(cid) {
+    try {
+        const options = {
+             
+        };
+        // 如果提供了 cid，则只查询该特定评论
+        if (cid) {
+            options.where = { id: cid };
+        }
+
+        // 使用 findAll 方法获取评论
+        const comments = await Comment.findAll(options);
+
+        // 返回找到的评论
+        return comments;
+
+    } catch (error) {
+        console.error('获取评论失败:', error.message);
+        throw new Error(`获取评论失败：${error.message}`);
+    }
+}
+
 module.exports = {
     addCommentService,
-    delCommentService
+    delCommentService,
+    getCommentsService
 }

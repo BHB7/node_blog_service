@@ -32,6 +32,11 @@ const Comment = mysql.define('comment', {
     complaint: {
         type: DataTypes.BIGINT,
         comment: '举报数'
+    }, 
+    like: {
+        type: DataTypes.BIGINT,
+        comment: '点赞',
+        defaultValue: 0
     }
 
 });

@@ -51,6 +51,11 @@ const Article = mysql.define('article', {
     state: {
         type: DataTypes.ENUM(['000', '010', '100']),
         comment: '文章状态 000 发布 010 审核 100 草稿'
+    },
+     like:{
+        type: DataTypes.BIGINT,
+        comment: '点赞',
+        defaultValue: 0
     }
 
 });

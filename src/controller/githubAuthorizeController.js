@@ -3,6 +3,40 @@ const { default: axios } = require('axios');
 const { config } = require('../utils/getConfig');
 const { Client_ID, Client_Secret } = config.github;
 
+
+
+const successPage = (token, userInfo) => `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub 登录成功</title>
+</head>
+<body>
+  <h3>登录成功！正在跳转...</h3>
+
+  <script>
+    // 检查是否由我们自己的窗口打开
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage({
+        type: 'GITHUB_LOGIN_SUCCESS',
+        payload: {
+          token: '${token}',
+          user: ${JSON.stringify(userInfo)}
+        }
+      }, 'https://vocucc.cn');  
+    }
+
+    // 关闭当前窗口
+    setTimeout(() => {
+      window.close();
+    }, 500);
+  </script>
+</body>
+</html>
+`;
+
+
 const githubAuthorizeLoginController = (req, res) => {
     let redirectUrl = 'https://github.com/login/oauth/authorize?client_id='.concat(Client_ID);
     // 重定向到github登录
@@ -15,7 +49,7 @@ const githubAuthorizeCallbackController = async (req, res) => {
         const { code } = req.query;
 
         if (!code) {
-            return res.status(400).json({ error: 'Missing authorization code' });
+            return res.status(400).json({ error: '缺少授权码' });
         }
 
         // 获取 access_token
@@ -31,7 +65,7 @@ const githubAuthorizeCallbackController = async (req, res) => {
                     Accept: 'application/json',
                 },
                 httpsAgent: new (require('https')).Agent({
-                    rejectUnauthorized: false, // 忽略证书验证（仅限开发环境）
+                    rejectUnauthorized: false,
                 }),
             }
         );
@@ -39,58 +73,58 @@ const githubAuthorizeCallbackController = async (req, res) => {
         const { access_token } = tokenResponse.data;
 
         if (!access_token) {
-            return res.error('Token已经失效了哦', 500);
+            return res.error('Token 已失效', 500);
         }
 
-        // 使用 access_token 获取用户信息
+        // 获取 GitHub 用户信息
         const userInfoResponse = await axios.get('https://api.github.com/user', {
             headers: {
                 Authorization: `Bearer ${access_token}`,
                 Accept: 'application/json',
             },
             httpsAgent: new (require('https')).Agent({
-                rejectUnauthorized: false, // 忽略证书验证（仅限开发环境）
+                rejectUnauthorized: false,
             }),
         });
 
         const githubUserInfo = userInfoResponse.data;
 
-        // 检查用户是否已存在
+        // 检查用户是否存在，不存在则创建
         let user = await User.findOne({ where: { githubId: githubUserInfo.id } });
 
         if (!user) {
-            // 创建新用户
             user = new User({
                 githubId: githubUserInfo.id,
                 ip: req.user.ip || 'un',
-                system: req.user.system || 'un' ,
+                system: req.user.system || 'un',
                 name: githubUserInfo.login,
                 imgurl: githubUserInfo.avatar_url,
                 email: githubUserInfo.email || '未提供',
-                token: access_token, // 存储访问令牌以便后续API调用
+                token: access_token,
             });
 
             await user.save();
         } else {
-            // 更新用户信息
             user.name = githubUserInfo.login;
             user.imgurl = githubUserInfo.avatar_url;
-            user.token = access_token; // 更新访问令牌
+            user.token = access_token;
             await user.save();
         }
-        res.success(null,'登录成功');
-        res.redirect('https://vocucc.cn');
+
+        // 返回 HTML 页面用于弹窗通信
+        res.setHeader('Content-Type', 'text/html;charset=utf-8');
+        res.send(successPage(access_token, githubUserInfo));
 
     } catch (error) {
-        console.error('Error during GitHub OAuth process:', error);
+        console.error('GitHub OAuth 错误:', error.message);
 
-        if (error.response) {
-            // 服务器返回了错误响应
-            return res.error('验证失败了',error.response.status || 500);
-        }
-
-        // 其他错误
-        return res.error('服务器异常',500);
+        // 返回错误页面或信息
+        res.status(500).send(`
+          <h3>登录失败，请稍后再试</h3>
+          <script>
+            setTimeout(() => window.close(), 1000);
+          </script>
+        `);
     }
 };
 
