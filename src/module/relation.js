@@ -1,13 +1,13 @@
-// relation 关系
 const Article = require('./articleModule');
 const Tag = require('./tagModule');
+const Comment = require('../module/commentModule');
 
-// 建立表关联
-
-// 中间表：article_tags
+// ========================
+// Article <-> Tag (多对多)
+// ========================
 Article.belongsToMany(Tag, {
     through: 'article_tags',
-    as: 'tags', // 别名（和后面 include 时一致）
+    as: 'tags',
     foreignKey: 'article_id'
 });
 
@@ -15,4 +15,17 @@ Tag.belongsToMany(Article, {
     through: 'article_tags',
     as: 'articles',
     foreignKey: 'tag_id'
+});
+
+// ========================
+// Article <-> Comment (一对多)
+// ========================
+Article.hasMany(Comment, {
+    as: 'comments',
+    foreignKey: 'article_id'
+});
+
+Comment.belongsTo(Article, {
+    as: 'article',
+    foreignKey: 'article_id'
 });

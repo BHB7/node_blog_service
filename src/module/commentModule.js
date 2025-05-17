@@ -8,9 +8,14 @@ const Comment = mysql.define('comment', {
         primaryKey: true,
         autoIncrement: true
     },
-    user_id: {
+    uid: {
         type: DataTypes.INTEGER,
         comment: '评论用户id',
+        allowNull: false
+    },
+    pid: {
+        type: DataTypes.INTEGER,
+        comment: '回复评论',
         allowNull: false
     },
     content: {
@@ -18,10 +23,11 @@ const Comment = mysql.define('comment', {
         comment: '评论内容',
         allowNull: false
     },
-    article_id: {
+    aid: {
         type: DataTypes.INTEGER,
         comment: '所属文章id',
-        allowNull: false
+        allowNull: false,
+        field: 'article_id' // ← 显式映射到数据库字段名
     },
     complaint: {
         type: DataTypes.BIGINT,
@@ -30,4 +36,4 @@ const Comment = mysql.define('comment', {
 
 });
 
-module.exports = Comment
+module.exports = Comment;

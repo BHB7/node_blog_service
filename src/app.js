@@ -17,14 +17,9 @@ const normalizeIp = require("./utils/normalizeIp");
 const githubAuthorizeRouter = require("./routers/githubAuthorizeRouter");
 const cacheRouter = require("./routers/cacheRouter");
 const { musicRouter } = require("./routers/musicRouter");
+const commentRouter = require("./routers/commentRouter");
 
 
-// 限流
-const limiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 100,
-    message: '请求过于频繁，请稍后再试'
-});
 
 const app = express();
 
@@ -34,7 +29,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'html'));  // 设置视图文件夹
 
 // 中间件
-app.use('/api/', limiter);
 app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -43,31 +37,41 @@ app.use((req, res, next) => {
     try {
         // 初始化 req.user 对象
         req.user = req.user || {};
-
+        
         // 获取客户端 IP 地址
         const ip =
-            req.headers['x-forwarded-for']?.split(',')[0] || // 反向代理中的真实 IP
-            req.connection.remoteAddress ||
-            req.socket.remoteAddress ||
-            (req.connection && req.connection.socket ? req.connection.socket.remoteAddress : null);
-
+        req.headers['x-forwarded-for']?.split(',')[0] || // 反向代理中的真实 IP
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        (req.connection && req.connection.socket ? req.connection.socket.remoteAddress : null);
+        
         // 规范化 IP 地址（将 IPv6 转换为 IPv4）
         req.user.ip = normalizeIp(ip);
-
+        
         // 解析 User-Agent
         const parser = new UAParser(req.headers['user-agent']);
         const result = parser.getResult();
-
+        
         // 将解析结果附加到请求对象中
         req.user.system = result.os.name + result.os.version || 'Unknown OS';
         req.user.browser = result.browser.name || 'Unknown Browser';
-
+        
         next();
     } catch (error) {
         console.error('中间件出错:', error.message);
         next(error); // 将错误传递给错误处理中间件
     }
 });
+// 限流
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minutes
+  max: 100, // limit each unique identifier to 100 requests per windowMs\
+  message: { error: '请求过多请稍候再试' },
+  keyGenerator: function(req) {
+    return req.user.ip; // use username as identifier
+  }
+})
+app.use('/api/', limiter);
 
 
 // JWT 鉴权中间件
@@ -94,6 +98,8 @@ app.use('/api/admin', adminHomeRouter);
 app.use('/api/github', githubAuthorizeRouter);
 app.use('/api/cache', cacheRouter);
 app.use('/api/music', musicRouter);
+app.use('/api/comment', commentRouter);
+
 
 // 测试接口
 app.get('/', (req, res) => {

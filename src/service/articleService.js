@@ -1,6 +1,7 @@
 const Article = require('../module/articleModule');
 const { Op } = require('sequelize');
 const Tag = require('../module/tagModule');
+const Comment = require('../module/commentModule');
 require('../module/relation');
 /**
  * 获取指定 id 的文章，并自增浏览量。
@@ -25,6 +26,10 @@ const getArticleServiceById = async (articleId) => {
                         as: 'tags',
                         attributes: ['id', 'name', 'desc'],
                         required: false
+                    },
+                    {
+                        model: Comment,
+                        as: 'comments'
                     }
                 ],
             }
@@ -47,7 +52,7 @@ const getArticleServiceById = async (articleId) => {
 async function createArticleService({ title, content, desc, cover, tagIds, user_id, ip, system, state }) {
     if (desc.length > 100) throw new Error("文章描述字数超过限制");
 
-    const article = await Article.create({ title, content, desc, cover, tagIds, user_id, ip, system, state});
+    const article = await Article.create({ title, content, desc, cover, tagIds, user_id, ip, system, state });
 
     // 优化：批量插入标签并且避免重复标签
     if (Array.isArray(tagIds) && tagIds.length > 0) {
@@ -64,8 +69,8 @@ async function createArticleService({ title, content, desc, cover, tagIds, user_
  */
 async function delArticleService(id) {
     const result = await Article.destroy({ where: { id } });
-    console.log(result,555);
-    
+    console.log(result, 555);
+
     return result > 0;
 }
 

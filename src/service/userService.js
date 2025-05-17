@@ -19,10 +19,13 @@ async function getUserService(id) {
     try {
         let whereClause = {};
         if (id) {
+            
             whereClause = { id }; // 只有当id不为空或未定义时，才添加到查询条件中
         }
 
-        const user = await User.findOne({ where: whereClause });
+        const user = await User.findOne({ where: whereClause, attributes: { include: [] } });
+        console.log(user);
+        
         const {password:_, ...safeUser} = user.dataValues;
         return safeUser;
     } catch (err) {
@@ -43,8 +46,7 @@ async function loginService({ name, password }) {
 
         // 查找用户
         const user = await User.findOne({
-            where: { name }, // 确保字段名正确
-            attributes: ['id', 'name', 'password']
+            where: { name }
         });
         // 检查查询结果
         if (!user || !user.id) {
