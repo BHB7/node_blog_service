@@ -120,7 +120,9 @@ const githubAuthorizeCallbackController = async (req, res) => {
         }
 
         // 返回 HTML 页面用于弹窗通信
-        res.setHeader('Content-Type', 'text/html;charset=utf-8');
+        // 设置响应头
+        res.header('Content-Type', 'text/html; charset=utf-8');
+        res.header('Access-Control-Allow-Origin', 'https://vocucc.cn');
         res.send(successPage(access_token, githubUserInfo));
 
     } catch (error) {
