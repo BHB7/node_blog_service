@@ -27,6 +27,8 @@ const app = express();
 // 设置 EJS 作为模板引擎
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'html'));  // 设置视图文件夹
+app.setHeader('Content-Type', 'text/html; charset=utf-8');
+app.setHeader('Access-Control-Allow-Origin', 'https://vocucc.cn');
 
 // 中间件
 app.use(cors({ credentials: true }));
@@ -99,7 +101,6 @@ app.use('/api/github', githubAuthorizeRouter);
 app.use('/api/cache', cacheRouter);
 app.use('/api/music', musicRouter);
 app.use('/api/comment', commentRouter);
-
 
 // 测试接口
 app.get('/', (req, res) => {

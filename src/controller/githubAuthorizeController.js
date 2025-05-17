@@ -16,21 +16,29 @@ const successPage = (token, userInfo) => `
   <h3>登录成功！正在跳转...</h3>
 
   <script>
-    // 检查是否由我们自己的窗口打开
-    if (window.opener && !window.opener.closed) {
-      window.opener.postMessage({
-        type: 'GITHUB_LOGIN_SUCCESS',
+    (function() {
+      const opener = window.opener;
+      if (!opener) {
+        console.error("找不到 opener");
+        return;
+      }
+
+      opener.postMessage({
+        type: "GITHUB_LOGIN_SUCCESS",
         payload: {
-          token: '${token}',
+          token: ${JSON.stringify(token)},
           user: ${JSON.stringify(userInfo)}
         }
-      }, 'https://vocucc.cn');  
-    }
+      }, "https://vocucc.cn");
 
-    // 关闭当前窗口
-    setTimeout(() => {
-      window.close();
-    }, 500);
+      setTimeout(() => {
+        try {
+          window.close();
+        } catch (e) {
+          console.warn("无法关闭弹窗", e);
+        }
+      }, 500);
+    })();
   </script>
 </body>
 </html>
