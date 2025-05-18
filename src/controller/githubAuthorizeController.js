@@ -2,7 +2,8 @@ const User = require('../module/userModule');
 const { default: axios } = require('axios');
 const { config } = require('../utils/getConfig');
 const { Client_ID, Client_Secret } = config.github;
-
+const jwt = require("jsonwebtoken");
+const { key } = require('../utils/getConfig');
 // 成功页面模板
 const successPage = (token, userInfo) => `
 <!DOCTYPE html>
@@ -109,9 +110,17 @@ const githubAuthorizeCallbackController = async (req, res) => {
       await user.save();
     }
 
+    // 生成JWT
+    // 生成 JWT Token
+    const tokenStr = jwt.sign(
+      { id: user.id, username: user.name },
+      key,
+      { expiresIn: '1h' }
+    );
+
     // 返回 HTML 页面用于通信
     res.header('Content-Type', 'text/html; charset=utf-8');
-    res.send(successPage(access_token, githubUserInfo));
+    res.send(successPage(tokenStr, githubUserInfo));
 
   } catch (error) {
     console.error('GitHub OAuth 错误:', error.message);
