@@ -15,29 +15,7 @@ const successPage = (token, userInfo) => `
   <h3>登录成功！正在跳转...</h3>
 
   <script>
-    (function() {
-      const opener = window.opener;
-      if (!opener) {
-        console.error("找不到 opener");
-        return;
-      }
-
-      opener.postMessage({
-        type: "GITHUB_LOGIN_SUCCESS",
-        payload: {
-          token: ${JSON.stringify(token)},
-          user: ${JSON.stringify(userInfo)}
-        }
-      }, "http://127.0.0.1:8000");
-
-      setTimeout(() => {
-        try {
-          window.close();
-        } catch (e) {
-          console.warn("无法关闭弹窗", e);
-        }
-      }, 500);
-    })();
+    console.log('sb')
   </script>
 </body>
 </html>
