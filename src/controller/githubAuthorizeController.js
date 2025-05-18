@@ -28,7 +28,7 @@ const successPage = (token, userInfo) => `
           token: ${JSON.stringify(token)},
           user: ${JSON.stringify(userInfo)}
         }
-      }, "https://vocucc.cn");
+      }, "http://127.0.0.1:8000");
 
       setTimeout(() => {
         try {
@@ -53,7 +53,7 @@ const githubAuthorizeLoginController = (req, res) => {
 const githubAuthorizeCallbackController = async (req, res) => {
   try {
     const { code } = req.query;
-
+     
     if (!code) {
       return res.status(400).json({ error: '缺少授权码' });
     }

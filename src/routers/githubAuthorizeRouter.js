@@ -6,7 +6,7 @@ const githubAuthorizeRouter = express.Router();
 // 登录
 githubAuthorizeRouter.get('/login', githubAuthorizeLoginController);
 // 登录授权完成的回调地址
-githubAuthorizeRouter.get('/callback', githubAuthorizeCallbackController)
+githubAuthorizeRouter.get('/callback', githubAuthorizeCallbackController);
 
 
 module.exports = githubAuthorizeRouter;
