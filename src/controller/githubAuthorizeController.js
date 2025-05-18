@@ -31,7 +31,7 @@ const successPage = (token, userInfo) => `
 
       setTimeout(() => {
         try {
-          // window.close();
+          window.close();
         } catch (e) {
           console.warn("无法关闭弹窗", e);
         }
