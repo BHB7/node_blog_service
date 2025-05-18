@@ -15,12 +15,39 @@ const successPage = (token, userInfo) => `
   <h3>登录成功！正在跳转...</h3>
 
   <script>
-    console.log('sb')
+     <script>
+    (function() {
+      const opener = window.opener;
+      if (!opener) {
+        console.error("找不到 opener");
+        return;
+      }
+
+      opener.postMessage({
+        type: "GITHUB_LOGIN_SUCCESS",
+        payload: {
+          token: ${JSON.stringify(token)},
+          user: ${JSON.stringify(userInfo)}
+        }
+      }, "https://vocucc.cn");
+
+      setTimeout(() => {
+        try {
+          // window.close();
+        } catch (e) {
+          console.warn("无法关闭弹窗", e);
+        }
+      }, 500);
+    })();
+  </script>
   </script>
 </body>
 </html>
 `;
-
+    (function(){
+      console.log(1);
+      
+    })()
 // 打开 GitHub 登录授权页
 const githubAuthorizeLoginController = (req, res) => {
   const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${Client_ID}`;
