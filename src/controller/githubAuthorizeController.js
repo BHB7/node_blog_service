@@ -27,7 +27,7 @@ const successPage = (token, userInfo) => `
           token: ${JSON.stringify(token)},
           user: ${JSON.stringify(userInfo)}
         }
-      }, "https://vocucc.cn");
+      }, "https://api.vocucd.cn");
 
       setTimeout(() => {
         try {
