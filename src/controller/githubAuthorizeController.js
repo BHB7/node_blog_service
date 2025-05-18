@@ -15,11 +15,19 @@ const successPage = (token, userInfo) => `
   <h3>登录成功！正在跳转...</h3>
      <script>
     (function() {
+      const bc = new BroadcastChannel('AlienZHOU');
       const opener = window.opener;
       if (!opener) {
         console.error("找不到 opener");
         return;
       }
+      bc.postMessage({
+        type: "GITHUB_LOGIN_SUCCESS",
+        payload: {
+          token: ${JSON.stringify(token)},
+          user: ${JSON.stringify(userInfo)}
+        }
+      }, "https://api.vocucd.cn");
 
       opener.postMessage({
         type: "GITHUB_LOGIN_SUCCESS",
