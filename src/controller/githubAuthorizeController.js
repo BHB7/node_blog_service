@@ -13,8 +13,6 @@ const successPage = (token, userInfo) => `
 </head>
 <body>
   <h3>登录成功！正在跳转...</h3>
-
-  <script>
      <script>
     (function() {
       const opener = window.opener;
@@ -40,14 +38,9 @@ const successPage = (token, userInfo) => `
       }, 500);
     })();
   </script>
-  </script>
 </body>
 </html>
 `;
-    (function(){
-      console.log(1);
-      
-    })()
 // 打开 GitHub 登录授权页
 const githubAuthorizeLoginController = (req, res) => {
   const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${Client_ID}`;
@@ -58,7 +51,7 @@ const githubAuthorizeLoginController = (req, res) => {
 const githubAuthorizeCallbackController = async (req, res) => {
   try {
     const { code } = req.query;
-     
+
     if (!code) {
       return res.status(400).json({ error: '缺少授权码' });
     }
