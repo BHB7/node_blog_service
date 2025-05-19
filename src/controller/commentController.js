@@ -28,7 +28,7 @@ const delCommentController = async (req, res) => {
 }
 
 const getCommentsController = async (req, res) => {
-    const { aid, cid, page, size, sort } = req.body;
+    const { aid, cid, page, size, sort } = req.params || req.body;
     try {
         const response = await getCommentsService(aid,cid, { page, size, sort });
         res.success(response, '获取评论成功')
