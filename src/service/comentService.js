@@ -77,6 +77,12 @@ async function delCommentService(cid) {
 }
 // 获取评论
 async function getCommentsService(aid, cid, { page = 1, size = 10, sort = 'recent' } = {}) {
+    let query = {};
+    if(aid){
+        query.aid = aid;
+    } else if (cid){
+        query.id = cid;
+    }
     // 定义排序规则
     let order;
     switch (sort) {
@@ -93,7 +99,7 @@ async function getCommentsService(aid, cid, { page = 1, size = 10, sort = 'recen
 
     try {
         const comments = await Comment.findAndCountAll({
-            where: { article_id: aid, id: cid }, // 根据文章ID过滤
+            where: query, // 根据文章ID过滤
             order: order,
             limit: size, // 每页大小
             offset: (page - 1) * size, // 跳过前面多少条记录
