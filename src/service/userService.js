@@ -24,9 +24,7 @@ async function getUserService(id) {
         }
 
         const user = await User.findOne({ where: whereClause, attributes: { include: [] } });
-        console.log(user);
-        
-        const {password:_, ...safeUser} = user.dataValues;
+        const {password:_, token:_1, ...safeUser} = user.dataValues;
         return safeUser;
     } catch (err) {
         throw new Error(`查询失败：${err.message}`);
