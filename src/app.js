@@ -18,6 +18,7 @@ const githubAuthorizeRouter = require("./routers/githubAuthorizeRouter");
 const cacheRouter = require("./routers/cacheRouter");
 const { musicRouter } = require("./routers/musicRouter");
 const commentRouter = require("./routers/commentRouter");
+const emojiRouter = require("./routers/emojiRouter");
 
 
 
@@ -85,6 +86,8 @@ app.use('/api',
             { url: /^\/api\/github\//, methods: ['GET'] },
             { url: /^\/api\/cache\//, methods: ['GET'] },
             { url: /^\/api\/user\//, methods: ['GET'] },
+            { url: /^\/api\/comment\//, methods: ['GET'] },
+            { url: /^\/api\/emoji/, methods: ['GET'] },
         ],
     })
 );
@@ -99,6 +102,7 @@ app.use('/api/github', githubAuthorizeRouter);
 app.use('/api/cache', cacheRouter);
 app.use('/api/music', musicRouter);
 app.use('/api/comment', commentRouter);
+app.use('/api/emoji', emojiRouter);
 
 // 测试接口
 app.get('/', (req, res) => {

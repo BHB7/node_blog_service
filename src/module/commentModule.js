@@ -23,6 +23,10 @@ const Comment = mysql.define('comment', {
         comment: '评论内容',
         allowNull: false
     },
+    reply_uid:{
+        type: DataTypes.INTEGER,
+        comment: '回复评论人的uid',
+    },
     aid: {
         type: DataTypes.INTEGER,
         comment: '所属文章id',

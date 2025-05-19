@@ -16,7 +16,7 @@ function returnValue(req, res, next) {
    * @returns {void} 返回 JSON 格式的响应
    */
   res.success = (data = null, message = '操作成功!', code = 200) => {
-    message = message.concat(getSuccessEmoji());  // 修改 message 的值
+    message = message + getSuccessEmoji();  // 修改 message 的值
     // 发送成功响应
     res.json({ code, message, data });
   };
@@ -29,7 +29,7 @@ function returnValue(req, res, next) {
    * @returns {void} 返回 JSON 格式的错误响应
    */
   res.error = (message = '操作失败啦', code = 500, data = null) => {
-    message = message.concat(getErrEmoji());  // 修改 message 的值
+    message = message + getErrEmoji();  // 修改 message 的值
     // 发送错误响应
     res.json({ code, message, data });
   };

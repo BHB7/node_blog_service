@@ -28,7 +28,7 @@ async function addCommentService({ uid, aid, content, pid = null }) {
         // 3. 创建评论记录（无需 include）
         const comment = await Comment.create({
             uid,
-            aid,  // ← 正确设置文章ID，Sequelize 会自动关联 Article
+            aid,  // ← 设置文章ID自动关联 Article
             pid,
             content: content.trim()
         });
@@ -75,27 +75,44 @@ async function delCommentService(cid) {
     }
 
 }
+// 获取评论
+async function getCommentsService(aid, cid, { page = 1, size = 10, sort = 'recent' } = {}) {
+    // 定义排序规则
+    let order;
+    switch (sort) {
+        case 'hot':
+            // 热门评论通常根据点赞数或回复数排序
+            order = [['likes', 'DESC'], ['createdAt', 'DESC']]; // 假设 likes 字段表示点赞数
+            break;
+        case 'recent':
+        default:
+            // 最近评论按照创建时间降序排列
+            order = [['createdAt', 'DESC']];
+            break;
+    }
 
-
-async function getCommentsService(cid) {
     try {
-        const options = {
-             
+        const comments = await Comment.findAndCountAll({
+            where: { article_id: aid, id: cid }, // 根据文章ID过滤
+            order: order,
+            limit: size, // 每页大小
+            offset: (page - 1) * size, // 跳过前面多少条记录
+            include: [
+                //  include选项
+            ]
+        });
+
+        // 返回结果包括数据列表和总数量，以便前端可以计算总页数
+        return {
+            currentPage: page,
+            pageSize: size,
+            totalItems: comments.count,
+            totalPages: Math.ceil(comments.count / size),
+            items: comments.rows
         };
-        // 如果提供了 cid，则只查询该特定评论
-        if (cid) {
-            options.where = { id: cid };
-        }
-
-        // 使用 findAll 方法获取评论
-        const comments = await Comment.findAll(options);
-
-        // 返回找到的评论
-        return comments;
-
     } catch (error) {
-        console.error('获取评论失败:', error.message);
-        throw new Error(`获取评论失败：${error.message}`);
+        console.error('获取评论失败:', error);
+        throw new Error('获取评论失败');
     }
 }
 

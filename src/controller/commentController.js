@@ -1,9 +1,9 @@
-const { addCommentService, delCommentService, getCommentsService} = require('../service/comentService');
+const { addCommentService, delCommentService, getCommentsService } = require('../service/comentService');
 
 
 
-const addCommentController = async (req, res) =>{
-    const {content, aid, uid, pid } = req.body;
+const addCommentController = async (req, res) => {
+    const { content, aid, uid, pid } = req.body;
     try {
         const response = await addCommentService({ content, aid, uid, pid });
         res.success(response, '评论成功');
@@ -13,8 +13,8 @@ const addCommentController = async (req, res) =>{
 }
 
 
- 
-const delCommentController = async (req, res) =>{
+
+const delCommentController = async (req, res) => {
     const { uid, aid, pid, content } = req.body;
     try {
         const response = await delCommentService(uid, aid, pid, content);
@@ -25,16 +25,13 @@ const delCommentController = async (req, res) =>{
 }
 
 const getCommentsController = async (req, res) => {
-    console.log('0000');
-    
+    const { aid, cid, page, size, sort } = req.body;
     try {
-        const { cid } = req.query || req.params;
-        const response = await getCommentsService(cid);
+        const response = await getCommentsService(aid,cid, { page, size, sort });
         res.success(response, '获取评论成功')
     } catch (error) {
         res.error('获取评论失败');
     }
-    
 }
 
 module.exports = {
