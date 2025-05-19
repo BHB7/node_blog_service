@@ -18,9 +18,11 @@ const addCommentController = async (req, res) => {
 
 
 const delCommentController = async (req, res) => {
-    const { uid, aid, pid, content } = req.body;
+    const { cid } = req.params || req.query;
+    // 从 JWT 中获取用户 ID
+    const user_id = req.auth?.id || req.user?.id; // 兼容 req.auth 和 req.user
     try {
-        const response = await delCommentService(uid, aid, pid, content);
+        const response = await delCommentService(cid, user_id);
         res.success(response, '删除评论成功');
     } catch (error) {
         res.error('删除评论失败');

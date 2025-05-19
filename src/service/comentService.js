@@ -63,9 +63,10 @@ async function addCommentService({ uid, aid, content, pid = null }) {
 }
 
 // 删除评论
-async function delCommentService(cid) {
-
-    if (!cid) return
+async function delCommentService(cid, uid) {
+   const comment = await Comment.findOne({where:{id:cid}});
+   if(!comment.uid === uid) throw new Error("无权操作");
+   if (!cid) return;
     try {
         const res = await Comment.destroy({ where: { id: cid } })
         console.log(res);
