@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
  */
 const sendMail = async ({ to, subject, text = '', html = '', attachments = [] }) => {
   const mailOptions = {
-    from: '"7z DEV" <dev12306@qq.com>',
+    from: '"7z" <dev12306@qq.com>',
     to,
     subject,
     text,

@@ -3,7 +3,6 @@ const { setVerifyCode, getVerifyCode, deleteVerifyCode } = require('../utils/ver
 
 const sendMail = require('../utils/sendMail');
 const genCode = require('../utils/getCode');
-const { getErrEmoji, getSuccessEmoji } = require('../utils/getResEemoji');
 const ejs = require('ejs');
 const path = require('node:path');
 const { default: axios } = require('axios');
