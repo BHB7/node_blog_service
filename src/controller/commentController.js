@@ -5,7 +5,7 @@ const { addCommentService, delCommentService, getCommentsService } = require('..
 const addCommentController = async (req, res) => {
      // 从 JWT 中获取用户 ID
     const user_id = req.auth?.id || req.user?.id; // 兼容 req.auth 和 req.user
-    const { content, aid, uid, pid } = req.body;
+    let { content, aid, uid, pid } = req.body;
     if(!uid) uid = user_id;
     try {
         const response = await addCommentService({ content, aid, uid, pid });
