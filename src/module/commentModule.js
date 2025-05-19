@@ -15,8 +15,7 @@ const Comment = mysql.define('comment', {
     },
     pid: {
         type: DataTypes.INTEGER,
-        comment: '回复评论',
-        allowNull: false
+        comment: '回复评论'
     },
     content: {
         type: DataTypes.STRING,
