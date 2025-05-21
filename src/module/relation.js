@@ -3,6 +3,7 @@ const Tag = require('./tagModule');
 const Comment = require('../module/commentModule');
 const Albums = require('../module/albumsModule');
 const Photos = require('../module/photosModule');
+const User = require('../module/userModule');
 // ========================
 // Article <-> Tag (多对多)
 // ========================
@@ -31,6 +32,11 @@ Comment.belongsTo(Article, {
     foreignKey: 'article_id'
 });
 
+// 关联到 User 模型
+Comment.belongsTo(User, {
+  foreignKey: 'uid',
+  as: 'user'
+});
 // ========================
 // Albums <-> photos  (一对多)
 // ========================
@@ -42,3 +48,4 @@ Photos.belongsTo(Albums, {
     as: 'albums',
     foreignKey: 'albums_id'
 });
+

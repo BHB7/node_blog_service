@@ -2,6 +2,7 @@ const Article = require('../module/articleModule');
 const Tag = require('../module/tagModule');
 const Comment = require('../module/commentModule');
 const { getUserService } = require('../service/userService');
+const User = require('../module/userModule');
 
 /**
  * 添加评论服务函数
@@ -64,9 +65,9 @@ async function addCommentService({ uid, aid, content, pid = null }) {
 
 // 删除评论
 async function delCommentService(cid, uid) {
-   const comment = await Comment.findOne({where:{id:cid}});
-   if(!comment.uid === uid) throw new Error("无权操作");
-   if (!cid) return;
+    const comment = await Comment.findOne({ where: { id: cid } });
+    if (!comment.uid === uid) throw new Error("无权操作");
+    if (!cid) return;
     try {
         const res = await Comment.destroy({ where: { id: cid } })
         console.log(res);
@@ -79,9 +80,9 @@ async function delCommentService(cid, uid) {
 // 获取评论
 async function getCommentsService(aid, cid, { page = 1, size = 10, sort = 'recent' } = {}) {
     let query = {};
-    if(aid){
+    if (aid) {
         query.aid = aid;
-    } else if (cid){
+    } else if (cid) {
         query.id = cid;
     }
     // 定义排序规则
@@ -105,7 +106,13 @@ async function getCommentsService(aid, cid, { page = 1, size = 10, sort = 'recen
             limit: size, // 每页大小
             offset: (page - 1) * size, // 跳过前面多少条记录
             include: [
-                //  include选项
+                {
+                    model: User,
+                    as: 'user',
+                    attributes: {
+                        exclude: ['password'] // 排除密码字段
+                    }
+                }
             ]
         });
 
