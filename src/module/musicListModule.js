@@ -1,12 +1,7 @@
 const { DataTypes } = require("sequelize");
 const mysql = require("../db/mysql");
-// cover 背景
-// title 标题
-// info 介绍
-// deleted_at 是否显示 0 1
-// link
 
-const HomeList = mysql.define("homelist", {
+const MusicList = mysql.define("musicList", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -15,30 +10,24 @@ const HomeList = mysql.define("homelist", {
   title: {
     type: DataTypes.STRING,
     allowNull: false,
-    comment: "标题",
+    comment: "音乐标题",
   },
-  info: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
-    comment: "介绍",
+    comment: "音乐作者",
   },
-  cover: {
+  type: {
     type: DataTypes.STRING,
     allowNull: false,
-    comment: "介绍",
+    comment: "音乐类型",
   },
   deleted_at: {
     type: DataTypes.CHAR,
     allowNull: false,
-    defaultValue: 0,
-    comment: "是否显示 0 1",
-  },
-  link: {
-    type: DataTypes.STRING,
-    // allowNull: false,
     comment: "是否显示 0 1",
   },
 });
 
 
-module.exports = HomeList;
+module.exports = MusicList;

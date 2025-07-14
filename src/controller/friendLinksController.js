@@ -84,7 +84,9 @@ async function setFriendLinkShowController(req, res) {
     console.error("更新友链失败:", err);
     res.error('更新友链失败', 500);
   }
-}
+};
+
+
 module.exports = {
   addFriendLinkController,
   getFriendLinkListController,

@@ -88,7 +88,7 @@ const loginController = async (req, res) => {
     });
     res.success(info, "耶！登录成功啦，欢迎回来，我们等你很久了！");
   } catch (err) {
-    res.error(err.message);
+    res.error('登录失败，用户名或者密码错误');
   }
 };
 

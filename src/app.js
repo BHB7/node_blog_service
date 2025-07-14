@@ -21,6 +21,7 @@ const { musicRouter } = require("./routers/musicRouter");
 const commentRouter = require("./routers/commentRouter");
 const emojiRouter = require("./routers/emojiRouter");
 const friendLinksRouter = require("./routers/friendLinkRouter");
+const homeListRouter = require("./routers/homeListRouter");
 
 
 
@@ -110,6 +111,7 @@ app.use('/api/comment', commentRouter);
 app.use('/api/emoji', emojiRouter);
 app.use('/api/gitee', giteeAuthorizeRouter);
 app.use('/api/link', friendLinksRouter);
+app.use('/api/homeList', homeListRouter);
 
 // 测试接口
 app.get('/', (req, res) => {

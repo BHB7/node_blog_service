@@ -20,7 +20,7 @@ userRouter.post("/list", getUserListController);
 userRouter.get("/info", getUserByIdController);
 userRouter.get("/admin/info", getAdminController);
 userRouter.put("/freeze", auth, setUserFreezeController);
-userRouter.post("/login",auth, [check("name"), check("password")], loginController);
+userRouter.post("/login", [check("name"), check("password")], loginController);
 
 userRouter.post(
   "/signup",

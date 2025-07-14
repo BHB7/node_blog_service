@@ -35,6 +35,11 @@ const Friend_links = mysql.define("friend_links", {
      defaultValue: false,
      comment: "是否显示"
   },
+    deleted_at: {
+    type: DataTypes.CHAR,
+    allowNull: false,
+    comment: "是否显示 0 1",
+  },
   click: {
     type: DataTypes.BIGINT,
     defaultValue: 0,
