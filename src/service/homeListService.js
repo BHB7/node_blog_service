@@ -6,6 +6,8 @@ const HomeList = require("../module/homeListModule");
 // deleted_at 是否显示 0 1
 // link
 async function addHomeDataService({ title, cover, info, link }) {
+    console.log(title);
+    
   try {
     const homeData = await HomeList.create({
       title: title,
@@ -13,6 +15,7 @@ async function addHomeDataService({ title, cover, info, link }) {
       cover: cover,
       info: info,
     });
+    return homeData
   } catch (error) {
     console.log("首页数据添加失败", error.message);
     throw new Error("ADD失败");
@@ -62,8 +65,35 @@ async function getHomeDataListService(page = 1, pageSize = 10) {
   }
 }
 
+async function updateHomeListService(id, newValue) {
+  try {
+    // 查找是否存在该记录
+    const homelist = await HomeList.findByPk(id);
+    if (!homelist) {
+      throw new Error("未找到要更新的数据");
+    }
+    // 更新数据
+    await homelist.update(newValue);
+    // 构造返回数据
+    return true;
+  } catch (error) {
+    console.error("更新失败:", error);
+    throw new Error("服务器内部错误");
+  }
+}
+
+async function setHomeListStateService(id) {
+  const homelist = await HomeList.findByPk(id);
+  console.log(homelist.dataValues.deleted_at);
+  
+  let state = +homelist.dataValues.deleted_at === 0 ? 1 : 0;
+  await updateHomeListService(id, { deleted_at: state });
+  return true;
+}
 module.exports = {
   addHomeDataService,
   delHomeDataService,
-  getHomeDataListService
+  getHomeDataListService,
+  updateHomeListService,
+  setHomeListStateService
 };

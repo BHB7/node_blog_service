@@ -94,6 +94,7 @@ app.use('/api',
             // { url: /^\/api\/user\//, methods: ['GET'] },
             { url: /^\/api\/comment\//, methods: ['GET'] },
             { url: /^\/api\/emoji/, methods: ['GET'] },
+            { url: /^\/api\/homeList/, methods: ['GET'] },
         ],
     })
 );
