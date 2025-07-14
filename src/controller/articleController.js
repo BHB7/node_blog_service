@@ -11,7 +11,7 @@ const createArticleController = async (req, res) => {
     const ip = req.user.ip;
     const system = req.user.system;
 
-    console.log(user_id);
+    console.log('USER_ID:',user_id);
 
     if (!user_id) {
         return res.error('用户未登录或 Token 无效', 401);
@@ -75,8 +75,12 @@ const getArticleControllerById = async (req, res) => {
         const { aid } = req.params;
         if (!aid) return res.error('请传入aid');
         const response = await getArticleServiceById(aid);
+        // console.log(response);
+        
         res.success(response);
     } catch (error) {
+        console.log(error.message);
+        
         res.error('获取文章详情失败啦');
     };
 };
@@ -88,12 +92,12 @@ const getArticlePageController = async (req, res) => {
         const reqData = { ...req.query, ...req.body };
 
         // 提取分页参数并转换为数字，并设置默认值
-        let { pageSize = 10, pageOffset = 0 } = reqData;
-        const { state, title, content, tagIds } = reqData;
-        pageSize = Number(pageSize) || 10;
-        pageOffset = Number(pageOffset) || 0;
+        let { last_page = 10, current_page = 1, page = 1 } = reqData;
+        const { state, title, content, tagIds, aid } = reqData;
+        last_page = Number(last_page) || Number(page) || 10;
+        current_page = Number(current_page) || 1;
         // 调用服务层查询文章，并返回 total 与 list 对象（假设服务返回结构已优化）
-        const pageList = await getArticlePageService({ query: {state, title, content, tagIds} ,pageSize, pageOffset });
+        const pageList = await getArticlePageService({ query: {state, title, content, tagIds, aid} ,last_page, current_page });
 
         // 成功响应
         res.success(pageList);

@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 // 创建用户
 async function createUserService(name, password) {
     try {
-        const user = await User.create({ name, password, imgurl:'https://vocucd.cn/web/%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.png' });
+        const user = await User.create({ name, password, avatar:'https://vocucd.cn/web/%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.png' });
         const {password:_, ...safeUser} = user.dataValues;
         return safeUser;
     } catch (err) {
@@ -15,7 +15,7 @@ async function createUserService(name, password) {
 };
 
 // 通过uid获取用户
-async function getUserService(id) {
+async function getUserServiceById(id) {
     try {
         let whereClause = {};
         if (id) {
@@ -53,6 +53,9 @@ async function loginService({ name, password }) {
         // 验证密码是否正确
         const isPasswordValid = await bcrypt.compare(String(password), user.password);
         if (!isPasswordValid) throw new Error("用户名或密码错误！");
+
+
+        if(user.permissionLevel === '0') throw new Error("对不起, 您的账号已被冻结")
 
         // 生成 JWT Token
         const tokenStr = jwt.sign(
@@ -96,7 +99,7 @@ async function signupService(req) {
             name,
             password: hashedPassword, // 存储加密后的密码
             email,
-            imgurl:'https://vocucd.cn/web/%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.png',
+            avatar:'https://vocucd.cn/web/%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.webp',
             ip: req.user.ip,
             system: req.user.system
         });
@@ -115,6 +118,8 @@ async function updateUserInfoService(uid, newInfo) {
     try {
         // 确保不更新密码字段
         const { password, ...safeNewInfo } = newInfo;
+        console.log(uid);
+        
 
         // 执行更新操作
         const [rowsUpdated] = await User.update(safeNewInfo, {
@@ -145,11 +150,42 @@ async function getAdminService() {
         throw new Error(`查询失败：${err.message}`);
     };
 }
+
+// 获取站点用户数
+async function getUserAllService(page = 1, pageSize = 10) {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // 查询条件：权限为 '002' 的用户
+    const whereClause = {
+      permissionLevel:[ '020', '000', '002']
+    };
+
+    // 分页查询
+    const result = await User.findAndCountAll({
+      where: whereClause,
+      offset,
+      limit: pageSize,
+      order: [["createdAt", "DESC"]] // 可选排序
+    });
+
+    return {
+      list: result.rows,
+      current_page: page,
+      last_page: Math.ceil(result.count / pageSize),
+      total: result.count
+    };
+  } catch (err) {
+    throw new Error(`查询失败：${err.message}`);
+  }
+}
+
 module.exports = {
-    getUserService,
+    getUserServiceById,
     createUserService,
     loginService,
     signupService,
     getAdminService,
+    getUserAllService,
     updateUserInfoService
 }

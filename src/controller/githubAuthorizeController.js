@@ -1,9 +1,9 @@
-const User = require('../module/userModule');
-const { default: axios } = require('axios');
-const { config } = require('../utils/getConfig');
+const User = require("../module/userModule");
+const { default: axios } = require("axios");
+const { config } = require("../utils/getConfig");
 const { Client_ID, Client_Secret } = config.github;
 const jwt = require("jsonwebtoken");
-const { key } = require('../utils/getConfig');
+const { key } = require("../utils/getConfig");
 // 成功页面模板
 const successPage = (token, userInfo) => `
 <!DOCTYPE html>
@@ -54,12 +54,12 @@ const githubAuthorizeCallbackController = async (req, res) => {
     const { code } = req.query;
 
     if (!code) {
-      return res.status(400).json({ error: '缺少授权码' });
+      return res.status(400).json({ error: "缺少授权码" });
     }
 
     // 获取 access_token
     const tokenResponse = await axios.post(
-      'https://github.com/login/oauth/access_token',
+      "https://github.com/login/oauth/access_token",
       {
         client_id: Client_ID,
         client_secret: Client_Secret,
@@ -67,23 +67,23 @@ const githubAuthorizeCallbackController = async (req, res) => {
       },
       {
         headers: {
-          Accept: 'application/json'
-        }
+          Accept: "application/json",
+        },
       }
     );
 
     const { access_token } = tokenResponse.data;
 
     if (!access_token) {
-      return res.status(500).json({ error: 'Token 获取失败' });
+      return res.status(500).json({ error: "Token 获取失败" });
     }
 
     // 获取 GitHub 用户信息
-    const userInfoResponse = await axios.get('https://api.github.com/user', {
+    const userInfoResponse = await axios.get("https://api.github.com/user", {
       headers: {
         Authorization: `Bearer ${access_token}`,
-        Accept: 'application/json'
-      }
+        Accept: "application/json",
+      },
     });
 
     const githubUserInfo = userInfoResponse.data;
@@ -94,36 +94,33 @@ const githubAuthorizeCallbackController = async (req, res) => {
     if (!user) {
       user = new User({
         githubId: githubUserInfo.id,
-        ip: req.user?.ip || 'un',
-        system: req.user?.system || 'un',
+        ip: req.user?.ip || "un",
+        system: req.user?.system || "un",
         name: githubUserInfo.login,
-        imgurl: githubUserInfo.avatar_url,
-        email: githubUserInfo.email || '未提供',
-        token: access_token
+        avatar: githubUserInfo.avatar_url,
+        email: githubUserInfo.email || "未提供",
+        token: access_token,
       });
 
       await user.save();
     } else {
       user.name = githubUserInfo.login;
-      user.imgurl = githubUserInfo.avatar_url;
+      user.avatar = githubUserInfo.avatar_url;
       user.token = access_token;
       await user.save();
     }
 
     // 生成JWT
     // 生成 JWT Token
-    const tokenStr = jwt.sign(
-      { id: user.id, username: user.name },
-      key,
-      { expiresIn: '1h' }
-    );
+    const tokenStr = jwt.sign({ id: user.id, username: user.name }, key, {
+      expiresIn: "1h",
+    });
 
     // 返回 HTML 页面用于通信
-    res.header('Content-Type', 'text/html; charset=utf-8');
+    res.header("Content-Type", "text/html; charset=utf-8");
     res.send(successPage(tokenStr, githubUserInfo));
-
   } catch (error) {
-    console.error('GitHub OAuth 错误:', error.message);
+    console.error("GitHub OAuth 错误:", error.message);
     res.status(500).send(`
       <h3>登录失败，请稍后再试</h3>
       <script>

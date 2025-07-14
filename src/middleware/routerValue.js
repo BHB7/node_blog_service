@@ -15,10 +15,11 @@ function returnValue(req, res, next) {
    * @param {number} [code=200] - 响应的状态码，默认为 200
    * @returns {void} 返回 JSON 格式的响应
    */
+  
   res.success = (data = null, message = '操作成功!', code = 200) => {
     message = message + getSuccessEmoji();  // 修改 message 的值
     // 发送成功响应
-    res.json({ code, message, data });
+    res.status(+code).json({ code, message, data });
   };
 
   /**
@@ -31,7 +32,7 @@ function returnValue(req, res, next) {
   res.error = (message = '操作失败啦', code = 500, data = null) => {
     message = message + getErrEmoji();  // 修改 message 的值
     // 发送错误响应
-    res.json({ code, message, data });
+    res.status(+code).json({ code, message, data });
   };
 
   // 调用下一个中间件

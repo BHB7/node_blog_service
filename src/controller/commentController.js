@@ -5,10 +5,10 @@ const { addCommentService, delCommentService, getCommentsService } = require('..
 const addCommentController = async (req, res) => {
      // 从 JWT 中获取用户 ID
     const user_id = req.auth?.id || req.user?.id; // 兼容 req.auth 和 req.user
-    let { content, aid, uid, pid } = req.body;
+    let { content, aid, uid, parentId } = req.body;
     if(!uid) uid = user_id;
     try {
-        const response = await addCommentService({ content, aid, uid, pid });
+        const response = await addCommentService({ content, aid, uid, parentId });
         res.success(response, '评论成功');
     } catch (error) {
         res.error(error.message);
@@ -30,7 +30,10 @@ const delCommentController = async (req, res) => {
 }
 
 const getCommentsController = async (req, res) => {
-    const { aid, cid, page, size, sort } = req.params || req.body;
+    const { aid, cid, page, size, sort } = req.query || req.body;
+
+    console.log(aid);
+    
     try {
         const response = await getCommentsService(aid,cid, { page, size, sort });
         res.success(response, '获取评论成功')

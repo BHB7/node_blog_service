@@ -1,10 +1,10 @@
-const { getUserService } = require('../service/userService');
+const { getUserServiceById } = require('../service/userService');
 
 async function auth(req, res, next) {
     const uid = req.params.uid || req.auth?.id || req.user?.id;
 
     try {
-        const userInfo = await getUserService(uid);
+        const userInfo = await getUserServiceById(uid);
         // 判断权限是否为超级管理员或管理员
         const allowedLevels = ['200', '020'];
         if (!allowedLevels.includes(userInfo.permissionLevel)) {

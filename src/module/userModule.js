@@ -15,7 +15,7 @@ const User = mysql.define('user', {
     password:DataTypes.STRING,
     age: DataTypes.INTEGER,
     email: DataTypes.STRING,
-    imgurl: DataTypes.STRING,
+    avatar: DataTypes.STRING,
     ip: DataTypes.STRING,
     gender:{
         type: DataTypes.ENUM(["0", "1"]),

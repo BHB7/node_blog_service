@@ -7,7 +7,7 @@ const { createArticleController,
 } = require('../controller/articleController');
 const articleRouter = express();
 
-articleRouter.post('/post', createArticleController);
+articleRouter.post('/postadd', createArticleController);
 articleRouter.put('/update', updateArticleController);
 articleRouter.all('/list', getArticlePageController);
 articleRouter.get('/:aid', getArticleControllerById);

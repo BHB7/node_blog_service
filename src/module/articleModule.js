@@ -22,9 +22,9 @@ const Article = mysql.define('article', {
         allowNull: false,
         comment: '文章所属用户id'
     },
-    subset_id: {
+    classty: {
         type: DataTypes.INTEGER,
-        comment: '文章分类id'
+        comment: '文章分类'
     },
     desc: {
         type: DataTypes.STRING,
@@ -35,9 +35,9 @@ const Article = mysql.define('article', {
         type: DataTypes.STRING,
         comment: '文字封面',
     },
-    view: {
+    like: {
         type: DataTypes.BIGINT,
-        comment: '文章浏览量',
+        comment: '文章点赞量',
         defaultValue: 0
     },
     ip: {
@@ -52,10 +52,34 @@ const Article = mysql.define('article', {
         type: DataTypes.ENUM(['000', '010', '100']),
         comment: '文章状态 000 发布 010 审核 100 草稿'
     },
-     like:{
+     click:{
         type: DataTypes.BIGINT,
-        comment: '点赞',
+        comment: '文章浏览量',
         defaultValue: 0
+    },
+    is_show:{
+        type: DataTypes.ENUM(['0', '1']),
+        comment: '首页显示 0 隐藏 1 显示'
+    },
+    head_show:{
+        type: DataTypes.ENUM(['0', '1']),
+        comment: '标题显示 0 隐藏 1 显示'
+    },
+    share_show:{
+        type: DataTypes.ENUM(['0', '1']),
+        comment: '分享显示 0 隐藏 1 显示'
+    },
+    copyright_show:{
+        type: DataTypes.ENUM(['0', '1']),
+        comment: '版权显示 0 隐藏 1 显示'
+    },
+    message_show:{
+         type: DataTypes.ENUM(['0', '1']),
+        comment: '留言显示 0 隐藏 1 显示'
+    },
+    seo:{
+         type: DataTypes.ENUM(['0', '1']),
+        comment: '提交收录 0 隐藏 1 显示'
     }
 
 });

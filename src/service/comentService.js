@@ -1,7 +1,7 @@
 const Article = require('../module/articleModule');
 const Tag = require('../module/tagModule');
 const Comment = require('../module/commentModule');
-const { getUserService } = require('../service/userService');
+const { getUserServiceById } = require('../service/userService');
 const User = require('../module/userModule');
 
 /**
@@ -10,13 +10,13 @@ const User = require('../module/userModule');
  * @param {number} params.uid 用户ID
  * @param {number} params.aid 所属文章ID
  * @param {string} params.content 评论内容
- * @param {number|null} [params.pid=null] 回复的目标评论ID（可选）
+ * @param {number|null} [params.parentId=null] 回复的目标评论ID（可选）
  * @returns {Promise<Object>} 创建的评论对象
  */
-async function addCommentService({ uid, aid, content, pid = null }) {
+async function addCommentService({ uid, aid, content, parentId = null }) {
     try {
         // 1. 验证用户是否存在
-        const user = await getUserService(uid);
+        const user = await getUserServiceById(uid);
         if (!user) {
             throw new Error('用户不存在');
         }
@@ -30,7 +30,7 @@ async function addCommentService({ uid, aid, content, pid = null }) {
         const comment = await Comment.create({
             uid,
             aid,  // ← 设置文章ID自动关联 Article
-            pid,
+            parentId,
             content: content.trim()
         });
 
@@ -51,7 +51,7 @@ async function addCommentService({ uid, aid, content, pid = null }) {
             id: data.id,
             uid: data.uid,
             aid: data.aid,
-            pid: data.pid,
+            parentId: data.parentId,
             content: data.content,
             createdAt: data.createdAt,
             article: data.article // ← 包含文章信息（可选）
@@ -69,8 +69,8 @@ async function delCommentService(cid, uid) {
     if (!comment.uid === uid) throw new Error("无权操作");
     if (!cid) return;
     try {
-        const res = await Comment.destroy({ where: { id: cid } })
-        console.log(res);
+        const res = await Comment.destroy({ where: { id: cid, parentId: cid } })
+        return res;
     } catch (error) {
         console.error('删除评论失败:', error.message);
         throw new Error(`删除评论失败：${error.message}`);
@@ -85,6 +85,8 @@ async function getCommentsService(aid, cid, { page = 1, size = 10, sort = 'recen
     } else if (cid) {
         query.id = cid;
     }
+    console.log(query)
+    
     // 定义排序规则
     let order;
     switch (sort) {

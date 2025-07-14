@@ -15,10 +15,12 @@ const tagRouter = require("./routers/tagRouter");
 const adminHomeRouter = require("./routers/adminHomeRouter");
 const normalizeIp = require("./utils/normalizeIp");
 const githubAuthorizeRouter = require("./routers/githubAuthorizeRouter");
+const giteeAuthorizeRouter = require("./routers/giteeAuthorizeRouter");
 const cacheRouter = require("./routers/cacheRouter");
 const { musicRouter } = require("./routers/musicRouter");
 const commentRouter = require("./routers/commentRouter");
 const emojiRouter = require("./routers/emojiRouter");
+const friendLinksRouter = require("./routers/friendLinkRouter");
 
 
 
@@ -80,12 +82,15 @@ app.use('/api',
     expressjwt({ secret: key, algorithms: ["HS256"] }).unless({
         path: [
             /^\/api\/user\/(login|signup|sendCode)$/, // 匹配 /api/user/login 和 /api/user/register
+            /^\/api\/admin\/(login|signup|sendCode)$/, // 匹配 /api/admin/login 和 /api/admin/register
+            // { url: /^\/api\/file\//, methods: ['POST'] },
             { url: /^\/api\/article\//, methods: ['GET'] },
             { url: /^\/api\/tag\//, methods: ['GET'] },
-            { url: /^\/api\/article\/del/},
+            // { url: /^\/api\/article\/del/},
             { url: /^\/api\/github\//, methods: ['GET'] },
+            { url: /^\/api\/gitee\//, methods: ['GET'] },
             { url: /^\/api\/cache\//, methods: ['GET'] },
-            { url: /^\/api\/user\//, methods: ['GET'] },
+            // { url: /^\/api\/user\//, methods: ['GET'] },
             { url: /^\/api\/comment\//, methods: ['GET'] },
             { url: /^\/api\/emoji/, methods: ['GET'] },
         ],
@@ -103,6 +108,8 @@ app.use('/api/cache', cacheRouter);
 app.use('/api/music', musicRouter);
 app.use('/api/comment', commentRouter);
 app.use('/api/emoji', emojiRouter);
+app.use('/api/gitee', giteeAuthorizeRouter);
+app.use('/api/link', friendLinksRouter);
 
 // 测试接口
 app.get('/', (req, res) => {

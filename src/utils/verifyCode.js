@@ -1,6 +1,6 @@
 const Redis = require('ioredis');
 const redis = new Redis({
-    host: 'localhost',
+    host: '127.0.0.1',
     port: 6379, // 默认端口，修改为你使用的端口
     // password: 'your-redis-password', // 如果 Redis 配置了密码，提供密码
 });

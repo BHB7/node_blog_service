@@ -4,6 +4,11 @@ const Comment = require('../module/commentModule');
 const Albums = require('../module/albumsModule');
 const Photos = require('../module/photosModule');
 const User = require('../module/userModule');
+
+const FriendLinks = require('../module/friendLinksModule');
+
+/**关系表 */
+
 // ========================
 // Article <-> Tag (多对多)
 // ========================
@@ -49,3 +54,16 @@ Photos.belongsTo(Albums, {
     foreignKey: 'albums_id'
 });
 
+// ========================
+// User <-> FriendLinks  (一对一) 表示一个用户有一个友链
+// ========================
+
+User.hasOne(FriendLinks,{
+    foreignKey: 'userId',
+     as: 'friendLink' 
+});
+// 表示一个友链属于一个用户
+FriendLinks.belongsTo(User,{
+     foreignKey: 'userId',
+    as: 'user'
+});

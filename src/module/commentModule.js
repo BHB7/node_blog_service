@@ -13,7 +13,7 @@ const Comment = mysql.define('comment', {
         comment: '评论用户id',
         allowNull: false
     },
-    pid: {
+    parentId: {
         type: DataTypes.INTEGER,
         comment: '回复评论'
     },
